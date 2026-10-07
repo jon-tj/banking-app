@@ -20,7 +20,7 @@ Project repository: https://github.com/jon-tj/banking-app
 
 </div>
 
-> Markdown conversion of the proposal submitted on September 30, 2026 (original: `FBD_Proposal.pdf`). The text is unchanged; only the layout has been adapted to Markdown.
+> Markdown conversion of the proposal submitted on September 30, 2026 (original: `FBD_Proposal.pdf`). The layout has been adapted to Markdown. The text has since been revised to make the rules on who can pay whom consistent with the functional requirements (Sections I, III-A, III-B, IV-B and Tables I and III); the submitted PDF remains the record of the original text.
 
 ---
 
@@ -32,7 +32,7 @@ This proposal describes a web-based digital banking system in which clients mana
 
 Banking is the canonical transaction-processing domain. Every operation that changes a balance must be atomic, must leave the data in a consistent state, and must remain auditable afterwards. Because these requirements are strict yet well understood, a banking system is an ideal subject for experiencing the complete software development life cycle, in which a defect in requirements or design propagates visibly into the delivered system [1], [2].
 
-Beyond its pedagogical value, the system addresses a practical need. Many accounts in daily life are used by several people: the treasury of a student club, a household budget among roommates, or a child’s allowance managed by a parent. Korean banks already serve part of this need with group accounts, as reviewed in Section III-B. In these services, however, shared access is expressed through a small number of fixed roles. A member can typically only view the account, while an owner or co-leader holds full withdrawal and transfer rights. There is no intermediate level, such as allowing an officer to pay only a designated supplier.
+Beyond its pedagogical value, the system addresses a practical need. Many accounts in daily life are used by several people: the treasury of a student club, a household budget among roommates, or a child’s allowance managed by a parent. Korean banks already serve part of this need with group accounts, as reviewed in Section III-B. In these services, however, shared access is expressed through a small number of fixed roles. A member can typically only view the account, while an owner or co-leader holds full withdrawal and transfer rights. There is no intermediate level, such as allowing an officer to transfer funds only to the account of a designated supplier.
 
 A system that lets an owner delegate narrowly scoped rights, records the acting person for every transaction, offers clients a channel to dispute unauthorised operations, and allows administrators to investigate without unrestricted access to personal data therefore goes beyond role-based sharing, while remaining well bounded. It requires no integration with real financial networks, which keeps the scope realistic for a single semester.
 
@@ -50,7 +50,7 @@ The overall goal is to deliver a working, deployed web application that manages 
 
 ### A. Current Situation
 
-Consider a student club whose funds are kept in a group account managed by its treasurer. When the treasurer is unavailable, another officer who needs to pay a supplier has two options. The first is to wait for the treasurer. The second is to be promoted to a role with full withdrawal rights, which also allows transfers to any recipient. When neither option fits, users fall back on sharing login credentials, and the record can no longer show which officer made a given payment. If a suspicious payment appears, the club has no structured way to report it inside the service, and a bank employee investigating it would typically see the owner’s personal details.
+Consider a student club whose funds are kept in a group account managed by its treasurer. When the treasurer is unavailable, another officer who needs to pay a supplier holding an account at the bank has two options. The first is to wait for the treasurer. The second is to be promoted to a role with full withdrawal rights, which also allows transfers to any recipient. When neither option fits, users fall back on sharing login credentials, and the record can no longer show which officer made a given payment. If a suspicious payment appears, the club has no structured way to report it inside the service, and a bank employee investigating it would typically see the owner’s personal details.
 
 ### B. Related Work
 
@@ -58,7 +58,7 @@ The KakaoBank group account is a personal account held in the name of the group 
 
 Both services confirm that shared use of an account is a real and widespread need. Both, however, model delegation as membership in a role rather than as a set of rights attached to a specific account and purpose. The proposed system differs in three respects:
 
-- Permissions are scoped per account, including transfers restricted to selected destination accounts.
+- Permissions are scoped per account, including transfers restricted to selected destination accounts within the system.
 - Every transaction records the individual who performed it.
 - Staff access to personal data requires explicit, time-limited consent from the client.
 
@@ -77,7 +77,7 @@ Table I maps each problem to the use cases that address it; the use cases themse
 | ID | Problem | Addressed by |
 |----|---------|--------------|
 | P1 | Coarse-grained access | UC-07 Manage Permissions; UC-04 Transfer Funds |
-| P2 | Weak accountability | UC-04, UC-06 (actor recorded); UC-08 View Transaction History |
+| P2 | Weak accountability | UC-04 (actor recorded); UC-08 View Transaction History |
 | P3 | No dispute channel | UC-09 Flag Unauthorised Transaction; UC-10 Investigate Transactions |
 | P4 | Oversight versus privacy | UC-10 (masked data); UC-11 Manage Data-Access Consent |
 | P5 | Credential attacks | UC-02 Log In and Log Out (lockout) |
@@ -113,13 +113,13 @@ In accordance with the course convention, the name of each use case will also be
 
 **UC-03 Manage Accounts.** A client opens one or more accounts linked to the user; each receives a unique account number and starts with a zero balance. The client can view the list of accounts with balances, assign a nickname, and close an account whose balance is zero and which has no open dispute flag.
 
-**UC-04 Transfer Funds.** A client or an authorised delegate transfers an amount from a source account to another account in the system, identified by its account number. The system verifies that the actor holds a transfer right covering the destination, that the amount is positive, and that the destination is open. The transfer is permitted even if the source balance becomes negative (DR-01). The debit and credit are executed as one atomic transaction, and the record stores the acting user in addition to both accounts.
+**UC-04 Transfer Funds.** A client or an authorised delegate transfers an amount from a source account to another account in the system, identified by its account number. The owner of the source account may transfer to any account. A delegate needs scope (b) of UC-07 with the destination among its selected accounts, or scope (c). The system verifies that the actor holds such a right, that the amount is positive, and that both the source and the destination are open. The transfer is permitted even if the source balance becomes negative (DR-01). The debit and credit are executed as one atomic transaction, and the record stores the acting user in addition to both accounts.
 
 **UC-05 Deposit Funds.** A client adds fictitious funds to an owned account, simulating a cash deposit, subject to a configurable per-operation limit.
 
-**UC-06 Make Payment or Withdrawal.** A client or an authorised delegate pays an external payee identified by name and reference. As this is a demonstration system, payments are recorded only on the sender’s side. A withdrawal is treated as a payment to oneself. Validation follows UC-04.
+**UC-06 Make Payment or Withdrawal.** A client pays an external payee, identified by name and reference, from an owned account. As this is a demonstration system, payments are recorded only on the sender’s side. A withdrawal is treated as a payment to the owner. Payments and withdrawals are reserved for the owner: no delegated scope authorises them, so funds leave the system only by the owner’s own action. The amount must be positive and the account must be open.
 
-**UC-07 Manage Permissions.** The owner of an account, or a delegate holding the manage-permissions scope, grants another user one or more scopes on that account: (a) view balance and history, (b) transfer to selected accounts, (c) transfer to any account, and (d) manage permissions. Grants can be modified or revoked at any time with immediate effect, and every change is recorded.
+**UC-07 Manage Permissions.** The owner of an account, or a delegate holding the manage-permissions scope, grants another user one or more scopes on that account: (a) view balance and history, (b) transfer to selected accounts in the system, (c) transfer to any account in the system, and (d) manage permissions. Transfer scopes apply only to UC-04; external payments and withdrawals (UC-06) cannot be delegated. Grants can be modified or revoked at any time with immediate effect, and every change is recorded.
 
 **UC-08 View Transaction History.** The owner, or a delegate with the view scope, lists the transactions of an account, filtered by period, type or counterparty. Each entry shows the user who initiated it.
 
@@ -138,7 +138,7 @@ In accordance with the course convention, the name of each use case will also be
 | UC-03 | Manage Accounts | Client | — |
 | UC-04 | Transfer Funds | Client, Delegate | P1, P2 |
 | UC-05 | Deposit Funds | Client | — |
-| UC-06 | Make Payment or Withdrawal | Client, Delegate | P2 |
+| UC-06 | Make Payment or Withdrawal | Client | — |
 | UC-07 | Manage Permissions | Client, Delegate | P1 |
 | UC-08 | View Transaction History | Client, Delegate | P2 |
 | UC-09 | Flag Unauthorised Transaction | Client | P3 |
