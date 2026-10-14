@@ -31,6 +31,8 @@ These rules apply to every functional requirement and are not repeated in each o
 | CR-05 | Money amounts are whole won, stored as signed 64-bit integers (DR-03). An amount must be greater than zero. |
 | CR-06 | Rules that depend on time (login blocks, session expiry, consent expiry) are evaluated by comparing stored timestamps with the current time when a request arrives. No scheduled job is used. |
 
+CR-02 is verified by sending requests directly to the server, bypassing the user interface, as required by AC-05.3, AC-06.8, AC-07.11, AC-09.4, AC-10.7 and AC-13.6. Every such request that the actor is not allowed to make must be rejected and change nothing.
+
 ## 3. Overview and traceability
 
 | FR | Name | Use case | Priority | Problems | Domain rules | Demo screens |
@@ -209,6 +211,8 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-07.7** Amounts of 0 or below, an unknown account number, and a closed account are rejected.
 - **AC-07.8** A transfer larger than the balance of a personal spending account succeeds, and the balance becomes negative (DR-01).
 - **AC-07.9** When a transfer is rejected, no transaction is recorded and no balance changes.
+- **AC-07.10** Twenty transfers of ₩1,000 each, sent at the same time from one spending account with a balance of ₩10,000, all succeed: twenty transactions are recorded, the balance becomes −₩10,000, and no update is lost (DR-01, DR-02).
+- **AC-07.11** A transfer request sent directly to the server, bypassing the user interface, with another user's account as the source is rejected and changes nothing (CR-02).
 
 ### FR-08 Deposit Funds
 
@@ -247,6 +251,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-09.5** With a group account balance of ₩50,000, a payment of ₩50,000 succeeds and leaves ₩0. A payment of ₩50,001 is rejected and nothing is recorded.
 - **AC-09.6** A withdrawal of ₩100,000 is recorded as a payment with the acting user as payee and the reference "cash withdrawal".
 - **AC-09.7** A payment without a payee, or with an amount of 0 or below, is rejected.
+- **AC-09.8** Twenty payments of ₩1,000 each, sent at the same time by Hana and a payer from a group account with a balance of ₩10,000: exactly ten succeed, the balance ends at ₩0 and is never below ₩0, and the ten rejected payments leave no record (DR-06).
 
 ### FR-10 View History and Contributions
 
