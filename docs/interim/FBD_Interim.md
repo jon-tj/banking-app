@@ -40,7 +40,7 @@ Clickable prototype: [`/demo`](../../demo)
 | Use cases | 11 | 13 | Router, groups and templates added; permission management replaced |
 | Data entities | 7 | 10 | Group, Membership, Router and RouterRule added; Permission removed |
 
-Login lockout, dispute flags, administrator investigation and data-access consent are kept unchanged.
+Login lockout, dispute flags, administrator investigation and data-access consent are kept unchanged, except that `blocked_until` is now an attribute of User rather than of LoginAttempt: a block belongs to the user, and the login attempts are only its log.
 
 ---
 
@@ -264,14 +264,14 @@ Table V lists the ten data entities currently anticipated, exceeding the minimum
 
 | Entity | Principal attributes | Use cases |
 |--------|----------------------|-----------|
-| User | user_id, name, email, password_hash, role, status | UC-01, UC-02 |
+| User | user_id, name, email, password_hash, role, status, blocked_until | UC-01, UC-02 |
 | Account | account_no, type (spending / savings / owt), owner_id or group_id, name, state, created_at | UC-03, UC-04, UC-06 to UC-10 |
 | Group | group_id, name, template, visibility, owner_id | UC-04, UC-06, UC-10 |
 | Membership | group_id, user_id, role (owner / payer / contributor), state (invited / active), invited_at, joined_at | UC-04, UC-06, UC-09, UC-10 |
 | Router | router_no, owner_id or group_id, remainder_account | UC-04, UC-05, UC-08 |
 | RouterRule | router_no, position, target_account, mode (percent / fixed), value | UC-04, UC-05, UC-08 |
 | Transaction | tx_id, type, from_account, to_account / payee, amount (int64, KRW), actor_id, cause_tx_id, timestamp | UC-07 to UC-10, UC-12 |
-| LoginAttempt | attempt_id, user_id, success, timestamp, blocked_until | UC-02 |
+| LoginAttempt | attempt_id, user_id, success, timestamp | UC-02 |
 | TransactionFlag | flag_id, tx_id, reporter_id, reason, state, resolution_note | UC-11, UC-12 |
 | Consent | consent_id, flag_id, client_id, admin_id, state, expires_at | UC-13 |
 
