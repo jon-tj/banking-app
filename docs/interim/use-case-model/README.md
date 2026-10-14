@@ -348,12 +348,12 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 | | |
 |---|---|
 | **Primary actor** | Administrator (request), Client (decision) |
-| **Preconditions** | A flag exists; the client is its reporter. |
+| **Preconditions** | A flag exists; the client is its reporter or the acting user of the flagged transaction, and the administrator needs that client's details. |
 | **Postconditions** | A consent record exists with state and expiry. Every access to personal details is logged. |
 
 **Main flow**
-1. During an investigation (UC-12), the administrator requests consent to see the personal details related to a flag.
-2. The system records the request as *Pending* and shows it to the client who reported the flag.
+1. During an investigation (UC-12), the administrator requests consent to see the personal details of one client involved in a flag: its reporter or the acting user of the flagged transaction.
+2. The system records the request as *Pending* and shows it to that client only.
 3. The client grants the request.
 4. The system sets the state to *Granted* and `expires_at` to the current time plus 72 hours.
 5. When the administrator opens the personal details, the system checks that the consent is granted and compares the current time with `expires_at`. The consent is valid, so the system shows the details and logs the access.

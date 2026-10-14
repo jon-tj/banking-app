@@ -206,7 +206,7 @@ A template only creates ordinary groups, accounts, routers and rules, which can 
 
 **UC-12 Investigate Transactions.** An administrator searches transactions by time range or by user and reviews open flags, updating their status with a note. Personal details of clients are masked by default on investigation screens.
 
-**UC-13 Manage Data-Access Consent.** To see a client's personal details, an administrator must request consent for a specific flag. The client grants or denies the request; a granted consent is time-limited (72 hours) and revocable. Expiry is determined by comparing the current time with the consent's `expires_at` timestamp whenever personal details are requested; no scheduled job is used. Every access to personal details is logged.
+**UC-13 Manage Data-Access Consent.** To see a client's personal details, an administrator must request consent from that client for a specific flag. The client is the reporter of the flag or the user who performed the flagged transaction, and only that client grants or denies the request; a granted consent is time-limited (72 hours) and revocable. Expiry is determined by comparing the current time with the consent's `expires_at` timestamp whenever personal details are requested; no scheduled job is used. Every access to personal details is logged.
 
 **Table IV. Summary of Use Cases**
 

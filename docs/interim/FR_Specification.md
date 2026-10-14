@@ -324,18 +324,19 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 |---|---|
 | **Use case** | UC-13 · **Priority** Should |
 | **Actor** | Administrator (request); Client (decision) |
-| **Requirement** | The system shall let an administrator request consent to see the personal details related to a flag, and let the client who reported the flag grant or deny it. A granted consent shall expire 72 hours after it was granted, and the client shall be able to revoke it at any time. The system shall show unmasked personal details only under a granted consent that has not expired, checked when the details are requested, and shall log every such access. |
+| **Requirement** | The system shall let an administrator request consent to see the personal details of a client involved in a flag, that is, its reporter or the acting user of the flagged transaction, and let only that client grant or deny it. A granted consent shall expire 72 hours after it was granted, and the client shall be able to revoke it at any time. The system shall show unmasked personal details only under a granted consent that has not expired, checked when the details are requested, and shall log every such access. |
 | **Inputs** | Flag; consent decision; revoke request |
 | **Outputs** | Consent record with state and `expires_at`; unmasked details; access log entries |
 | **Business rules** | NFR-09, CR-02, CR-06 |
 
 **Acceptance criteria**
-- **AC-13.1** Consent can only be requested for an existing flag. The request is stored as *Pending* and shown to the reporter of the flag.
+- **AC-13.1** Consent can only be requested for an existing flag. The request is stored as *Pending* and shown only to the client whose details are requested.
 - **AC-13.2** Granting sets `expires_at` to the time of granting plus 72 hours. The details become visible to the requesting administrator for that flag only.
 - **AC-13.3** A request for the details 71 hours 59 minutes after granting shows them. A request 72 hours or more after granting shows them masked, with no background job having run.
 - **AC-13.4** After the client denies or revokes, the details are masked on the next request.
 - **AC-13.5** Every display of unmasked details is logged with the administrator, the client, the flag and the time.
 - **AC-13.6** Without a valid consent, no server endpoint returns unmasked personal details, including endpoints the user interface does not use.
+- **AC-13.7** When Hana flags a payment that a payer made from the club's account, consent to see the payer's details is requested from the payer, not from Hana. A consent given by Hana never unmasks another member's details.
 
 ---
 
