@@ -38,7 +38,7 @@ Clickable prototype: [`/demo`](../../demo)
 | Setup | Manual | Account system templates: Couple, Club, Church, Custom | One step creates the right accounts, router and settings |
 | Payments by others | A client or an authorised delegate (UC-06); no permission scope covered payments | Owner of a personal account, or the owner or a payer of a group | The scopes did not cover payments (feedback ③); the treasurer and the partner must be able to pay bills |
 | Use cases | 11 | 13 | Router, groups and templates added; permission management replaced |
-| Data entities | 7 | 10 | Group, Membership, Router and RouterRule added; Permission removed |
+| Data entities | 7 | 11 | Group, Membership, Router, RouterRule and AuditEvent added; Permission removed |
 
 Login lockout, dispute flags, administrator investigation and data-access consent are kept unchanged, except that `blocked_until` is now an attribute of User rather than of LoginAttempt: a block belongs to the user, and the login attempts are only its log.
 
@@ -61,7 +61,7 @@ The instructor's feedback on the submitted proposal raised the points below. Eac
 
 ## Summary
 
-This document describes a web-based digital banking system in which people manage money together with fictitious funds. It is built from three simple building blocks. **Personal accounts** belong to one user. **One-way transfer (OWT) accounts** belong to a group: money can only flow in, by transfer from a member, and can only leave as a payment made by a member with pay rights. **Routers** are virtual account numbers that hold no money and split every incoming amount between accounts by a list of rules. On top of these blocks, **account system templates** set up a couple's household account, a club with several budgets, or a church fund in one step, and each group chooses whether its members can see who contributed what. Only members who have accepted an invitation see anything of a group. Every transaction records who performed it. The system comprises thirteen use cases and ten persistent data entities, and it is developed with the Scrum framework from requirements and UML-based design to implementation by AI-assisted vibe coding and deployment as a public web application.
+This document describes a web-based digital banking system in which people manage money together with fictitious funds. It is built from three simple building blocks. **Personal accounts** belong to one user. **One-way transfer (OWT) accounts** belong to a group: money can only flow in, by transfer from a member, and can only leave as a payment made by a member with pay rights. **Routers** are virtual account numbers that hold no money and split every incoming amount between accounts by a list of rules. On top of these blocks, **account system templates** set up a couple's household account, a club with several budgets, or a church fund in one step, and each group chooses whether its members can see who contributed what. Only members who have accepted an invitation see anything of a group. Every transaction records who performed it. The system comprises thirteen use cases and eleven persistent data entities, and it is developed with the Scrum framework from requirements and UML-based design to implementation by AI-assisted vibe coding and deployment as a public web application.
 
 ## I. Necessity of the Proposed System
 
@@ -273,24 +273,27 @@ The banking domain imposes rules that every function must respect:
 
 ### G. Anticipated Data Model
 
-Table V lists the ten data entities currently anticipated, exceeding the minimum of four required for the term project. The final schema will be derived from the class model during design.
+Table V lists the eleven data entities currently anticipated, exceeding the minimum of four required for the term project. The final schema will be derived from the class model during design.
 
 **Table V. Anticipated Data Entities**
 
 | Entity | Principal attributes | Use cases |
 |--------|----------------------|-----------|
-| User | user_id, name, email, password_hash, role, status, blocked_until | UC-01, UC-02 |
+| User | user_id, name, email, password_hash, role, blocked_until | UC-01, UC-02 |
 | Account | account_no, type (spending / savings / owt), owner_id or group_id, name, state, created_at | UC-03, UC-04, UC-06 to UC-10 |
 | Group | group_id, name, template, visibility, owner_id | UC-04, UC-06, UC-10 |
 | Membership | group_id, user_id, role (owner / payer / contributor), state (invited / active), invited_at, joined_at | UC-04, UC-06, UC-09, UC-10 |
 | Router | router_no, owner_id or group_id, remainder_account | UC-04, UC-05, UC-08 |
 | RouterRule | router_no, position, target_account, mode (percent / fixed), value | UC-04, UC-05, UC-08 |
-| Transaction | tx_id, type (deposit / transfer / payment), from_account, to_account / payee, amount (int64, KRW), actor_id, cause_tx_id, timestamp | UC-07 to UC-10, UC-12 |
+| Transaction | tx_id, type (deposit / transfer / payment), from_account, to_account, counterparty (payee or sender), message, amount (int64, KRW), actor_id, cause_tx_id, timestamp | UC-07 to UC-10, UC-12 |
 | LoginAttempt | attempt_id, user_id, success, timestamp | UC-02 |
-| TransactionFlag | flag_id, tx_id, reporter_id, reason, state, resolution_note | UC-11, UC-12 |
-| Consent | consent_id, flag_id, client_id, admin_id, state, expires_at | UC-13 |
+| TransactionFlag | flag_id, tx_id, reporter_id, reason, state, resolution_note, created_at | UC-11, UC-12 |
+| Consent | consent_id, flag_id, client_id (whose details are shown), admin_id, state, requested_at, expires_at | UC-13 |
+| AuditEvent | event_id, actor_id, action, entity, entity_id, group_id, timestamp | UC-06, UC-13 (CR-03, AC-06.10, AC-13.5) |
 
 Balances are not stored but derived from the transaction ledger, or stored together with each transaction in the same atomic write, as decided during design (G2).
+
+AuditEvent records every change of data (CR-03), which includes a group's change log, and every display of unmasked personal details (AC-13.5). It is not yet drawn in the domain class diagram of the analysis model. Sessions are kept by the authentication service of the hosting platform and are not a domain entity; the idle limit of UC-02 is checked against the time of a session's last request. `User.status` of the submitted proposal is removed: it held the login block, which is now `blocked_until`.
 
 ## V. Work Breakdown Structure
 
