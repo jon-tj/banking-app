@@ -79,7 +79,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 |---|---|
 | **Use case** | UC-02 · **Priority** Must |
 | **Actor** | Client |
-| **Requirement** | The system shall authenticate a client by e-mail address and password and record every login attempt. After five consecutive failed attempts, it shall alert the user and block login for 24 hours by storing a `blocked_until` timestamp. It shall end a session when the client logs out, or when more than 30 minutes have passed since the session's previous request. |
+| **Requirement** | The system shall authenticate a client by e-mail address and password and record every login attempt. After five consecutive failed attempts, it shall block login for 24 hours by storing a `blocked_until` timestamp, and tell the user so with a message in the application. It shall send no e-mail or other message outside the application. It shall end a session when the client logs out, or when more than 30 minutes have passed since the session's previous request. |
 | **Inputs** | E-mail address, password; log-out request; any request carrying a session |
 | **Outputs** | Session; error message; block message stating when login reopens; login attempt records |
 | **Business rules** | NFR-03, CR-06 |
@@ -87,7 +87,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 **Acceptance criteria**
 - **AC-02.1** Correct credentials establish a session, and a successful attempt is recorded.
 - **AC-02.2** A wrong password and an unknown e-mail address produce the same message, so the message does not reveal whether the e-mail is registered. A failed attempt is recorded.
-- **AC-02.3** After the fifth consecutive failed attempt, `blocked_until` equals the time of that attempt plus 24 hours, and the user is alerted.
+- **AC-02.3** After the fifth consecutive failed attempt, `blocked_until` equals the time of that attempt plus 24 hours, and the login screen says that login is blocked. No e-mail is sent.
 - **AC-02.4** While the current time is before `blocked_until`, even the correct password is rejected. The attempt is recorded, and the message states when login is possible again.
 - **AC-02.5** With `blocked_until` in the past, the correct password succeeds, with no background job having run.
 - **AC-02.6** A successful login resets the count: four failures, one success and four more failures do not cause a block.

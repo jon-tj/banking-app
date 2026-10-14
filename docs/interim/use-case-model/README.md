@@ -106,7 +106,7 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 - **A2 Idle session:** on every request, the system compares the current time with the time of the session's last request. If more than 30 minutes have passed, the session is ended and the client is asked to log in again. No scheduled job is used.
 
 **Exception flows**
-- **E1 Wrong password** (step 3): the system records a failed attempt and shows a message that does not reveal whether the e-mail is registered. If this is the fifth consecutive failure, the system sets `blocked_until` to the current time plus 24 hours and alerts the user.
+- **E1 Wrong password** (step 3): the system records a failed attempt and shows a message that does not reveal whether the e-mail is registered. If this is the fifth consecutive failure, the system sets `blocked_until` to the current time plus 24 hours and shows on the login screen that login is blocked. No e-mail is sent.
 - **E2 Blocked** (step 2): the current time is before `blocked_until`. The system records the attempt, rejects it without checking the password, and shows when login will be possible again. The block ends by itself when the time has passed; no scheduled job lifts it.
 - **E3 Unknown e-mail** (step 3): handled like E1, without a user to block.
 
