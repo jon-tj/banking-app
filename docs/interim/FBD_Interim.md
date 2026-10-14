@@ -162,13 +162,13 @@ A **group** is a set of members together with one or more OWT accounts, an optio
 
 **UC-01 Register User.** A visitor creates a user by providing a full name, an e-mail address and a password. The e-mail address must be unique, and the password must satisfy a minimum policy (at least eight characters, including letters and digits). Passwords are stored only as salted hashes.
 
-**UC-02 Log In and Log Out.** A client authenticates with e-mail and password, and a session is established. Every attempt is recorded. After five consecutive failed attempts, the system alerts the user and blocks further login attempts for 24 hours by setting a `blocked_until` timestamp. On each attempt, the system compares the current time with `blocked_until`; no scheduled job is used to lift the block. Logging out ends the session, and idle sessions expire, checked against the time of the last request.
+**UC-02 Log In and Log Out.** A client authenticates with e-mail and password, and a session is established. Every attempt is recorded. After five consecutive failed attempts, the system alerts the user and blocks further login attempts for 24 hours by setting a `blocked_until` timestamp. On each attempt, the system compares the current time with `blocked_until`; no scheduled job is used to lift the block. Logging out ends the session, and a session expires after 30 minutes without a request, checked against the time of the last request on each new request.
 
 **UC-03 Manage Personal Accounts.** A client opens spending and savings accounts; each receives a unique account number and starts with a zero balance. The client can view the accounts with balances, rename an account, and close an account whose balance is zero, which is not the target of any router rule, and which has no open dispute flag.
 
 **UC-04 Set Up Group from Template.** A client creates a group by choosing a template, naming the group, and adjusting the proposed settings before confirming. The client becomes the group owner. The templates are:
 
-- **Couple:** one OWT account (for example "Our home"); the invited partner is a payer; visibility *members*. Each partner is offered a rule in their own personal router that sends a percentage or fixed amount of every income to the shared account.
+- **Couple:** one OWT account (for example "Our home"); the partner is invited as a payer and joins on accepting the invitation; visibility *members*. Each partner is offered a rule in their own personal router that sends a percentage or fixed amount of every income to the shared account.
 - **Club:** a group router whose number is given to members for dues, and OWT subaccounts with a proposed split (for example Marketing 20 %, Materials 30 %, Joint exercises 50 %); visibility *public*.
 - **Church:** one OWT account (for example "Building fund"); visibility *private*.
 - **Custom:** one OWT account; all settings chosen by the owner.
@@ -177,7 +177,7 @@ A template only creates ordinary groups, accounts, routers and rules, which can 
 
 **UC-05 Manage Router.** A client creates a personal router, or a group owner creates a group router. A router has its own account number, an ordered list of rules, and a remainder account. Each rule sends a percentage of the received amount, or a fixed amount, to a target account. Rules in a personal router may target the owner's personal accounts and OWT accounts of groups the owner is a member of; rules in a group router may target only that group's OWT accounts. The system shows a preview of how a sample amount would be split. Changes take effect for the next incoming amount.
 
-**UC-06 Manage Group.** The group owner invites registered users as contributors or payers, changes a member's role, removes members, adds, renames or closes subaccounts (an OWT account can be closed only at a zero balance), and sets the contribution visibility to *public*, *members* or *private* (DR-07). Members can leave a group at any time. Every change is recorded.
+**UC-06 Manage Group.** The group owner invites registered users as contributors or payers. An invited user sees the group's name, their role and its contribution visibility, and becomes a member only on accepting the invitation; until then nothing is shared with them, and they can decline. The owner also changes a member's role, removes members, adds, renames or closes subaccounts (an OWT account can be closed only at a zero balance), and sets the contribution visibility to *public*, *members* or *private* (DR-07). Members can leave a group at any time. Every change is recorded.
 
 **UC-07 Transfer Funds.** A client transfers an amount from a personal account to another account, identified by its account number, subject to the flow rules of Table II: to any spending account, to the client's own savings accounts, to an OWT account or group router of a group the client is a member of, or to the client's own router. The system verifies that the amount is positive and that both accounts are open. The debit and credit are executed as one atomic transaction, and the record stores the acting user in addition to both accounts.
 
@@ -215,7 +215,7 @@ A template only creates ordinary groups, accounts, routers and rules, which can 
 
 The scenarios below follow the example users of the prototype.
 
-**S1 Couple.** Minji chooses the *Couple* template, names the account "Our home" and invites Joon as a payer. She accepts the offered router rule "30 % of every income to Our home"; Joon sets "₩800,000 to Our home" in his own router. When Minji's salary of ₩3,400,000 arrives at her router, ₩1,020,000 goes to Our home and the rest to her spending account, in one transaction. Joon pays the rent from Our home; the history shows that Joon made the payment.
+**S1 Couple.** Minji chooses the *Couple* template, names the account "Our home" and invites Joon as a payer; Joon sees that contributions are visible to members and accepts. Minji accepts the offered router rule "30 % of every income to Our home"; Joon sets "₩800,000 to Our home" in his own router. When Minji's salary of ₩3,400,000 arrives at her router, ₩1,020,000 goes to Our home and the rest to her spending account, in one transaction. Joon pays the rent from Our home; the history shows that Joon made the payment.
 
 **S2 Club.** Hana chooses the *Club* template for Seoul Trail Club and keeps the proposed subaccounts Marketing (20 %), Materials (30 %) and Joint exercises (50 %). Members transfer their ₩30,000 monthly dues to the club's router number, and each payment is split across the three subaccounts. Hana pays a cabin deposit from Joint exercises. Because the club's visibility is *public*, the club's public page lists its largest contributors.
 
@@ -241,7 +241,7 @@ Non-functional requirements are classified into product, organisational and exte
 
 #### External requirements
 
-- **NFR-09 Privacy.** Personal details of clients are disclosed to staff only under the consent mechanism of UC-13, and every such disclosure is logged. Individual contributions are shown only as the group's visibility setting allows, and users are told a group's visibility before they join it.
+- **NFR-09 Privacy.** Personal details of clients are disclosed to staff only under the consent mechanism of UC-13, and every such disclosure is logged. Individual contributions are shown only as the group's visibility setting allows. A user joins a group only by accepting an invitation that states the group's visibility.
 - **NFR-10 Ethical constraint.** The system handles only fictitious funds and test data. No real financial data or real personal data is collected.
 
 ### F. Domain Requirements
@@ -254,7 +254,7 @@ The banking domain imposes rules that every function must respect:
 - **DR-04** A closed account can neither send nor receive funds, and a committed transaction is never modified or deleted. Corrections are made only through new transactions.
 - **DR-05** A router never holds money. When an amount arrives, its rules are applied in order: a percentage rule takes that percentage of the received amount, rounded down to whole won; a fixed rule takes its amount; each rule takes at most what is left; and whatever remains goes to the remainder account. The incoming amount and all resulting transfers are committed together or not at all, and each resulting transfer records the actor of the incoming amount as its actor (so a split through a group router is credited to the member who paid) and the incoming transaction as its cause.
 - **DR-06** Money enters an OWT account only by transfer, from a member's spending account or from a router, never by direct deposit, so every won can be traced to a member. It leaves only as a payment by the group's owner or a payer. An OWT account cannot be paid below zero, since no single person is liable for a group's debt.
-- **DR-07** Contribution visibility is one of: *public* — anyone can see the group's total and its largest contributors on the public page, and members see every member's contributions; *members* — members see every member's contributions; *private* — each member sees only their own contributions and the group's total, and only the owner and payers see every contribution. Balances and payments are visible to all members in every case.
+- **DR-07** Contribution visibility is one of: *public* — anyone can see the group's total and its largest contributors on the public page, and members see every member's contributions; *members* — members see every member's contributions; *private* — the owner and payers see every contribution; contributors see their own contributions with their name, the group's total, and other members' contributions only without a name, as "a member", with amount and date. Balances and payments are visible to all members in every case. On the public page, contributors with the same total are ordered by their earliest contribution.
 
 ### G. Anticipated Data Model
 
@@ -267,7 +267,7 @@ Table V lists the ten data entities currently anticipated, exceeding the minimum
 | User | user_id, name, email, password_hash, role, status | UC-01, UC-02 |
 | Account | account_no, type (spending / savings / owt), owner_id or group_id, name, state, created_at | UC-03, UC-04, UC-06 to UC-10 |
 | Group | group_id, name, template, visibility, owner_id | UC-04, UC-06, UC-10 |
-| Membership | group_id, user_id, role (owner / payer / contributor), joined_at | UC-04, UC-06, UC-09, UC-10 |
+| Membership | group_id, user_id, role (owner / payer / contributor), state (invited / active), invited_at, joined_at | UC-04, UC-06, UC-09, UC-10 |
 | Router | router_no, owner_id or group_id, remainder_account | UC-04, UC-05, UC-08 |
 | RouterRule | router_no, position, target_account, mode (percent / fixed), value | UC-04, UC-05, UC-08 |
 | Transaction | tx_id, type, from_account, to_account / payee, amount (int64, KRW), actor_id, cause_tx_id, timestamp | UC-07 to UC-10, UC-12 |

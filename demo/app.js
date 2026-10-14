@@ -10,7 +10,7 @@
    ========================================================= */
 
 const STORE = 'fbd-bank-demo';
-const VERSION = 2;
+const VERSION = 3;
 const DAY = 864e5;
 const DEPOSIT_LIMIT = 10000000; // per operation (UC-08)
 const PAGE_SIZE = 30;
@@ -212,6 +212,7 @@ function seed() {
   acc('home', 'owt', { group: 'g-home', name: 'Our home' });
 
   grp('g-club', 'Seoul Trail Club', 'club', 'hana', contributors(['minji', 'jiho', 'seoyeon', 'taemin']));
+  s.groups[s.groups.length - 1].members.push({ user: 'joon', role: 'contributor', state: 'invited', invited: ago(1) });
   acc('club-mkt', 'owt', { group: 'g-club', name: 'Marketing' });
   acc('club-mat', 'owt', { group: 'g-club', name: 'Materials' });
   acc('club-trips', 'owt', { group: 'g-club', name: 'Joint exercises' });
@@ -306,12 +307,18 @@ function byNumber(no) {
 
 /* ---------- roles and rules ---------- */
 
+// A membership is 'active', or 'invited' / 'declined' until the user accepts
+// (UC-06 A7). Only active members have a role in the group.
+const isActive = m => (m.state || 'active') === 'active';
+
 function groupRole(uid, g) {
   if (!g || !uid) return null;
   if (g.owner === uid) return 'owner';
-  return g.members.find(m => m.user === uid)?.role || null;
+  const m = g.members.find(x => x.user === uid);
+  return m && isActive(m) ? m.role : null;
 }
-const members = g => [{ user: g.owner, role: 'owner' }, ...g.members];
+const members = g => [{ user: g.owner, role: 'owner' }, ...g.members.filter(isActive)];
+const invitationsFor = uid => state.groups.filter(g => g.members.some(m => m.user === uid && m.state === 'invited'));
 const isPayer = (uid, g) => ['owner', 'payer'].includes(groupRole(uid, g));
 const seesAll = (uid, g) => g.visibility !== 'private' || isPayer(uid, g);
 
@@ -629,6 +636,7 @@ function home() {
   const me = state.me;
   const personal = myPersonal();
   const groups = myGroups();
+  const invites = invitationsFor(me);
   const total = personal.reduce((s, a) => s + balance(a.id), 0);
   const rt = routerOf(me);
   const hour = new Date().getHours();
@@ -658,6 +666,18 @@ function home() {
             <span class="hr-cta">Set up router ${icon('chevron')}</span>`}
         </a>
       </section>
+      ${invites.length ? `
+        <section class="sect"><div class="sect-head"><h2>Invitations</h2><span class="muted small">You join a group only if you accept.</span></div>
+        <div class="invites">${invites.map(g => {
+          const m = g.members.find(x => x.user === me);
+          return `<div class="card invite-card">
+            <div class="acct-chips">${templateChip(g)}${visChip(g)}</div>
+            <h3>${esc(g.name)}</h3>
+            <p class="muted">${esc(user(g.owner).name)} invites you as a <strong>${m.role}</strong>: ${m.role === 'payer' ? 'you can send money in and pay from the group' : 'you can send money in and see the group’s balance and payments'}.</p>
+            <p class="note">${icon(VIS[g.visibility].icon)}<span><strong>${VIS[g.visibility].label}:</strong> ${VIS[g.visibility].text}</span></p>
+            <div class="row end"><button class="btn" data-decline="${g.id}">Decline</button><button class="btn primary" data-accept="${g.id}">${icon('check')} Accept and join</button></div>
+          </div>`;
+        }).join('')}</div></section>` : ''}
       ${personal.length || groups.length ? '' : `
         <div class="empty">${icon('card', 'big')}<h2>Open your first account</h2>
         <p class="muted">Start with a spending account. Then set up a group to share money with your partner, club or church.</p>
@@ -669,6 +689,18 @@ function home() {
         <div class="grid">${groups.map(groupCard).join('')}
           <a class="acard add" href="#/setup">${icon('plus')}<strong>Set up a group</strong><span class="muted small">Couple, club, church or custom</span></a>
         </div></section>`,
+    init() {
+      const answer = (gid, accept) => {
+        const g = group(gid), m = g.members.find(x => x.user === me);
+        m.state = accept ? 'active' : 'declined';
+        if (accept) m.joined = Date.now();
+        save();
+        toast(accept ? `You joined ${esc(g.name)}` : `Invitation to ${esc(g.name)} declined`);
+        if (accept) go(`#/group/${gid}`); else render();
+      };
+      $$('[data-accept]').forEach(b => b.addEventListener('click', () => answer(b.dataset.accept, true)));
+      $$('[data-decline]').forEach(b => b.addEventListener('click', () => answer(b.dataset.decline, false)));
+    },
   };
 }
 
@@ -726,6 +758,7 @@ function groupFlows(g, period) {
     if (t.ts < since) continue;
     if (t.type === 'transfer' && ids.has(t.to) && !ids.has(t.from)) {
       if (!by.has(t.actor)) by.set(t.actor, { user: t.actor, amount: 0, count: 0, former: true });
+      if (!(by.get(t.actor).first <= t.ts)) by.get(t.actor).first = t.ts;
       const e = by.get(t.actor);
       e.amount += t.amount;
       const key = t.via || t.id; // a split counts as one contribution
@@ -734,6 +767,9 @@ function groupFlows(g, period) {
   }
   return { rows: [...by.values()], out, outCount };
 }
+
+// Largest total first; ties go to the earliest first contribution (DR-07).
+const byContribution = (x, y) => y.amount - x.amount || (x.first ?? Infinity) - (y.first ?? Infinity);
 
 function graphSVG(g, opts) {
   const me = state.me;
@@ -827,7 +863,7 @@ function breakdown(g, period, restricted) {
   }
   return `<table class="bd">
     <thead><tr><th>Member</th><th class="num">Contributions</th><th class="num">Total in</th><th class="share">Share</th></tr></thead>
-    <tbody>${rows.sort((x, y) => y.amount - x.amount).map(r => {
+    <tbody>${rows.sort(byContribution).map(r => {
       const pct = total ? r.amount / total * 100 : 0;
       const who = r.others
         ? `<span class="avatar sm more">+${r.n}</span> Other members <span class="muted small">private</span>`
@@ -953,7 +989,8 @@ function settingsPage(gid) {
   const owner = g.owner === me;
   const accts = groupAccounts(gid);
   const rt = groupRouter(gid);
-  const candidates = state.users.filter(u => !groupRole(u.id, g));
+  const candidates = state.users.filter(u => !groupRole(u.id, g) && !g.members.some(m => m.user === u.id && m.state === 'invited'));
+  const pending = g.members.filter(m => !isActive(m));
   const roleSelect = m => `<select class="mini-select" data-role="${m.user}" aria-label="Role of ${esc(user(m.user).name)}">
       <option value="payer" ${m.role === 'payer' ? 'selected' : ''}>Payer</option>
       <option value="contributor" ${m.role === 'contributor' ? 'selected' : ''}>Contributor</option></select>`;
@@ -975,14 +1012,16 @@ function settingsPage(gid) {
         <section class="card">
           <div class="side-head"><h3>Members</h3><span class="muted small">Payers can pay from the group. Contributors can only send money in.</span></div>
           <ul class="ppl big">${members(g).map(m => `<li>${avatar(m.user)}<span class="grow"><strong>${esc(user(m.user).name)}${m.user === me ? ' <span class="muted">(you)</span>' : ''}</strong><span class="muted small">${esc(user(m.user).email)}</span></span>
-            ${m.role === 'owner' || !owner ? `<span class="role">${ROLES[m.role]}</span>` : `${roleSelect(m)}<button class="icon-btn" data-remove="${m.user}" title="Remove">${icon('trash')}</button>`}</li>`).join('')}</ul>
+            ${m.role === 'owner' || !owner ? `<span class="role">${ROLES[m.role]}</span>` : `${roleSelect(m)}<button class="icon-btn" data-remove="${m.user}" title="Remove">${icon('trash')}</button>`}</li>`).join('')}
+            ${owner ? pending.map(m => `<li class="pending">${avatar(m.user)}<span class="grow"><strong>${esc(user(m.user).name)}</strong><span class="muted small">${esc(user(m.user).email)}</span></span>
+              <span class="role ${m.state}">${m.state === 'invited' ? `Invited as ${m.role} · waiting` : 'Declined'}</span><button class="icon-btn" data-remove="${m.user}" title="${m.state === 'invited' ? 'Withdraw invitation' : 'Remove'}">${icon('trash')}</button></li>`).join('') : ''}</ul>
           ${owner ? (candidates.length ? `
             <form class="row invite" id="inv">
               <label class="field grow"><span>Invite</span><select name="user">${candidates.map(u => `<option value="${u.id}">${esc(u.name)} — ${esc(u.email)}</option>`).join('')}</select></label>
               <label class="field"><span>Role</span><select name="role"><option value="contributor">Contributor</option><option value="payer">Payer</option></select></label>
               <button class="btn primary">${icon('plus')} Invite</button>
             </form>
-            <p class="muted small">Invited users are shown that this group’s contributions are ${VIS[g.visibility].label.toLowerCase()} before they join.</p>` : '<p class="muted">Everyone in the demo is already a member.</p>')
+            <p class="muted small">Invited users see that this group’s contributions are ${VIS[g.visibility].label.toLowerCase()}, and join only if they accept.</p>` : '<p class="muted">Everyone in the demo is already a member or invited.</p>')
             : `<button class="btn" id="leave">${icon('out')} Leave group</button>`}
         </section>
 
@@ -1012,14 +1051,16 @@ function settingsPage(gid) {
         toast(`${esc(firstName(s.dataset.role))} is now a ${s.value}`);
       }));
       $$('[data-remove]').forEach(b => b.addEventListener('click', () => {
-        g.members = g.members.filter(m => m.user !== b.dataset.remove);
-        save(); toast(`${esc(user(b.dataset.remove).name)} is no longer a member`); render();
+        const m = g.members.find(x => x.user === b.dataset.remove);
+        g.members = g.members.filter(x => x.user !== b.dataset.remove);
+        save(); toast(m?.state === 'invited' ? `Invitation to ${esc(user(b.dataset.remove).name)} withdrawn` : `${esc(user(b.dataset.remove).name)} is no longer a member`); render();
       }));
       $('#inv')?.addEventListener('submit', ev => {
         ev.preventDefault();
         const f = new FormData(ev.target);
-        g.members.push({ user: f.get('user'), role: f.get('role') });
-        save(); toast(`${esc(user(f.get('user')).name)} joined as ${f.get('role')}`); render();
+        g.members = g.members.filter(m => m.user !== f.get('user')); // replaces a declined invitation
+        g.members.push({ user: f.get('user'), role: f.get('role'), state: 'invited', invited: Date.now() });
+        save(); toast(`Invitation sent to ${esc(user(f.get('user')).name)}`); render();
       });
       $('#leave')?.addEventListener('click', () => {
         g.members = g.members.filter(m => m.user !== me);
@@ -1050,7 +1091,7 @@ function publicPage(gid) {
   }
   const { rows } = groupFlows(g, 'all');
   const total = rows.reduce((s, r) => s + r.amount, 0);
-  const top = rows.filter(r => r.amount > 0).sort((a, b) => b.amount - a.amount).slice(0, 5);
+  const top = rows.filter(r => r.amount > 0).sort(byContribution).slice(0, 5);
   return {
     html: `
       <div class="narrow wide public">
@@ -1064,7 +1105,7 @@ function publicPage(gid) {
         <section class="card">
           <div class="side-head"><h3>${icon('trophy')} Largest contributors</h3><span class="muted small">All time</span></div>
           <ol class="ppl big leaders">${top.map((r, i) => `<li><span class="rank">${i + 1}</span>${avatar(r.user)}<span class="grow"><strong>${esc(user(r.user).name)}</strong></span><strong class="num">${won(r.amount)}</strong></li>`).join('')}</ol>
-          <p class="muted small">Shown because ${esc(g.name)} has chosen public contributions. Members are told this before they join.</p>
+          <p class="muted small">Shown because ${esc(g.name)} has chosen public contributions. Members agree to this when they accept their invitation. Tied totals are ordered by earliest contribution.</p>
         </section>
       </div>`,
   };
@@ -1109,7 +1150,7 @@ function setupPage(q) {
           <label class="field"><span>Name</span><input name="gname" value="${esc(t.name)}" autocomplete="off"></label>
           ${k === 'couple' ? `
             <label class="field"><span>Partner</span><select name="partner">${others.map(u => `<option value="${u.id}">${esc(u.name)} — ${esc(u.email)}</option>`).join('')}</select>
-              <small class="muted">Joins as a payer, so both of you can pay bills.</small></label>
+              <small class="muted">Invited as a payer, so both of you can pay bills. They join when they accept.</small></label>
             <label class="field"><span>Your router sends this share of every income here</span>
               <div class="row nowrap"><input name="pct" class="pct" inputmode="numeric" value="30"><span class="muted">%</span></div>
               <small class="muted">${routerOf(me) ? 'A rule is added to your router.' : 'A router is created for you, with the rest going to your spending account.'} Your partner sets their own share.</small></label>` : ''}
@@ -1169,7 +1210,7 @@ function setupPage(q) {
 
         const id = 'g' + Date.now().toString(36);
         const g = { id, name, template: k, visibility: f.vis.value, owner: me, members: [], created: Date.now() };
-        if (k === 'couple') g.members.push({ user: f.elements.partner.value, role: 'payer' });
+        if (k === 'couple') g.members.push({ user: f.elements.partner.value, role: 'payer', state: 'invited', invited: Date.now() });
         state.groups.push(g);
         const mk = (n, i = 0) => {
           const a = { id: `${id}-${i}`, type: 'owt', group: id, name: n, no: makeNo('owt'), created: Date.now() };
@@ -1189,7 +1230,7 @@ function setupPage(q) {
           }
         }
         save();
-        toast(`${esc(name)} is set up`);
+        toast(k === 'couple' ? `${esc(name)} is set up. Invitation sent to ${esc(firstName(f.elements.partner.value))}` : `${esc(name)} is set up`);
         go(`#/group/${id}`);
       });
     },

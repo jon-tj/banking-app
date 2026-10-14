@@ -1,0 +1,860 @@
+{
+	"_type": "Project",
+	"_id": "82FlbalfWXDvL07InZkI",
+	"name": "FBD Bank",
+	"ownedElements": [
+		{
+			"_type": "UMLModel",
+			"_id": "nown+4ofvhJV53kdTpdo",
+			"_parent": {
+				"$ref": "82FlbalfWXDvL07InZkI"
+			},
+			"name": "Use Case Model",
+			"ownedElements": [
+				{
+					"_type": "UMLUseCaseSubject",
+					"_id": "CV09KMGlWf/c8WyWHv/c",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "FBD Bank"
+				},
+				{
+					"_type": "UMLActor",
+					"_id": "XY7LRwKveyCVXUgTBuY8",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "Visitor",
+					"documentation": "An unauthenticated person: registers, logs in, or views a group’s public contributor page.",
+					"ownedElements": [
+						{
+							"_type": "UMLAssociation",
+							"_id": "lNGkBOTkx+sappSKqnDR",
+							"_parent": {
+								"$ref": "XY7LRwKveyCVXUgTBuY8"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "kCWOKJszOexz6tKZ86Ev",
+								"_parent": {
+									"$ref": "lNGkBOTkx+sappSKqnDR"
+								},
+								"reference": {
+									"$ref": "XY7LRwKveyCVXUgTBuY8"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "+wafv4K0GNEbWx6+ulku",
+								"_parent": {
+									"$ref": "lNGkBOTkx+sappSKqnDR"
+								},
+								"reference": {
+									"$ref": "VP9LzHdlLj6eV0XecRZ/"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "wtJ5tx/2GXG2vFpZMkdJ",
+							"_parent": {
+								"$ref": "XY7LRwKveyCVXUgTBuY8"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "8TW5ntB5u0Gu9l5pbVDs",
+								"_parent": {
+									"$ref": "wtJ5tx/2GXG2vFpZMkdJ"
+								},
+								"reference": {
+									"$ref": "XY7LRwKveyCVXUgTBuY8"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "x2k3pm7XbmFW1NcaHfyI",
+								"_parent": {
+									"$ref": "wtJ5tx/2GXG2vFpZMkdJ"
+								},
+								"reference": {
+									"$ref": "me2cZX/Vs1ZpqnAqkCAL"
+								}
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLActor",
+					"_id": "YYCJRRf6xsJAi0+gip/z",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "Client",
+					"documentation": "A registered user who owns personal accounts and a personal router.",
+					"ownedElements": [
+						{
+							"_type": "UMLAssociation",
+							"_id": "gaebnuVamBQX6JF3gvH9",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "4D+2Bx6aHxQYXSN23yu3",
+								"_parent": {
+									"$ref": "gaebnuVamBQX6JF3gvH9"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "+tkq6MSreBxanTJH9Z/h",
+								"_parent": {
+									"$ref": "gaebnuVamBQX6JF3gvH9"
+								},
+								"reference": {
+									"$ref": "2WkHFJ+0CvkIiVkXzr1P"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "x98itaoUUqBrrxgf0LXD",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "+p0eFw6KKbfeJKOBOwzL",
+								"_parent": {
+									"$ref": "x98itaoUUqBrrxgf0LXD"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "IsbhWQ5xaeXdKCl5Go9d",
+								"_parent": {
+									"$ref": "x98itaoUUqBrrxgf0LXD"
+								},
+								"reference": {
+									"$ref": "niFTDlVqHy153vF4p9Q2"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "7FKQ9T+eV6kPy2CyRlFG",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "MR9bEKQ7i3lEUXn9IloP",
+								"_parent": {
+									"$ref": "7FKQ9T+eV6kPy2CyRlFG"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "CS0SfhfKS7M2UaIXch27",
+								"_parent": {
+									"$ref": "7FKQ9T+eV6kPy2CyRlFG"
+								},
+								"reference": {
+									"$ref": "yGr2dWSGb16EmjvjqcIl"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "ftluHb2/gMr4suH4NeOI",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "oE4+xY+mAdcQ5D1i2Sa/",
+								"_parent": {
+									"$ref": "ftluHb2/gMr4suH4NeOI"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "meWGcNo08iZLm+bD/uBH",
+								"_parent": {
+									"$ref": "ftluHb2/gMr4suH4NeOI"
+								},
+								"reference": {
+									"$ref": "sV8x2fQaMQJ72EF4Kpq4"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "uKcUI0991mbWAvfU/0jN",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "0PokPxjSXH3dB/wyi7Fo",
+								"_parent": {
+									"$ref": "uKcUI0991mbWAvfU/0jN"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "VwkBODsEWcpgzEjV5NQ7",
+								"_parent": {
+									"$ref": "uKcUI0991mbWAvfU/0jN"
+								},
+								"reference": {
+									"$ref": "XyuNHUxc35wbjV/UqXq/"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "gCaicCTD9hB70infAFAW",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "AG7ez6pxXsasrpDrJhcP",
+								"_parent": {
+									"$ref": "gCaicCTD9hB70infAFAW"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "pyFchzmwMrird2Yuq1LH",
+								"_parent": {
+									"$ref": "gCaicCTD9hB70infAFAW"
+								},
+								"reference": {
+									"$ref": "MSserC0AM+vu3m8PGStf"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "4K9YjJvLG+m12UOE4e1n",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "jy8f60N0yUwXUYyKlvJc",
+								"_parent": {
+									"$ref": "4K9YjJvLG+m12UOE4e1n"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "zfwAEOmw6L6DJ8HskRAh",
+								"_parent": {
+									"$ref": "4K9YjJvLG+m12UOE4e1n"
+								},
+								"reference": {
+									"$ref": "fWWdxZ52T9weUwUITiOl"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "FnpGmCFnxC8ym1Mofn9P",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "NH8qx3NlpVqQoUDUwEuv",
+								"_parent": {
+									"$ref": "FnpGmCFnxC8ym1Mofn9P"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "ZacpdZm3w9rCjys9gt85",
+								"_parent": {
+									"$ref": "FnpGmCFnxC8ym1Mofn9P"
+								},
+								"reference": {
+									"$ref": "me2cZX/Vs1ZpqnAqkCAL"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "uFVtDIzlBHz0wkfWi3ka",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "8vElIzu5z84ULL0iY3jX",
+								"_parent": {
+									"$ref": "uFVtDIzlBHz0wkfWi3ka"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "K/NoBOdIzW0683C7JbJ5",
+								"_parent": {
+									"$ref": "uFVtDIzlBHz0wkfWi3ka"
+								},
+								"reference": {
+									"$ref": "jSeeKIsuSG/NBAjjupYB"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "IlayxhONzJDhdusklJVx",
+							"_parent": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "uRfPUclF6OoPQYxZ2v6e",
+								"_parent": {
+									"$ref": "IlayxhONzJDhdusklJVx"
+								},
+								"reference": {
+									"$ref": "YYCJRRf6xsJAi0+gip/z"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "T6oohQ2BOuicm4FDQyQj",
+								"_parent": {
+									"$ref": "IlayxhONzJDhdusklJVx"
+								},
+								"reference": {
+									"$ref": "/vyhoJE5OIevnyy9WtT1"
+								}
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLActor",
+					"_id": "u1MD5R9mbpYm8yws75/m",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "Group owner",
+					"documentation": "A client who owns a group, for example a treasurer.",
+					"ownedElements": [
+						{
+							"_type": "UMLAssociation",
+							"_id": "u1iChzNmGZNUOPLaYzXU",
+							"_parent": {
+								"$ref": "u1MD5R9mbpYm8yws75/m"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "uUhoX0N2rMI2WJ3ZXKHK",
+								"_parent": {
+									"$ref": "u1iChzNmGZNUOPLaYzXU"
+								},
+								"reference": {
+									"$ref": "u1MD5R9mbpYm8yws75/m"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "vQ0gtqsrvOaCDPKP33/0",
+								"_parent": {
+									"$ref": "u1iChzNmGZNUOPLaYzXU"
+								},
+								"reference": {
+									"$ref": "VMduAu002Hfq1x+2+WGM"
+								}
+							}
+						},
+						{
+							"_type": "UMLGeneralization",
+							"_id": "L8rFB22/yDpvgg0DBUmD",
+							"_parent": {
+								"$ref": "u1MD5R9mbpYm8yws75/m"
+							},
+							"source": {
+								"$ref": "u1MD5R9mbpYm8yws75/m"
+							},
+							"target": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLActor",
+					"_id": "Ir2Vwda+7gFePCB88I7Y",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "Member",
+					"documentation": "A client who is a contributor or payer in a group owned by someone else.",
+					"ownedElements": [
+						{
+							"_type": "UMLAssociation",
+							"_id": "guUU/UJhKtYsMzTbgLls",
+							"_parent": {
+								"$ref": "Ir2Vwda+7gFePCB88I7Y"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "HQK/mYqc+q/DZ516Odg2",
+								"_parent": {
+									"$ref": "guUU/UJhKtYsMzTbgLls"
+								},
+								"reference": {
+									"$ref": "Ir2Vwda+7gFePCB88I7Y"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "fqtHJDjeaYgG4c68ASva",
+								"_parent": {
+									"$ref": "guUU/UJhKtYsMzTbgLls"
+								},
+								"reference": {
+									"$ref": "VMduAu002Hfq1x+2+WGM"
+								}
+							}
+						},
+						{
+							"_type": "UMLGeneralization",
+							"_id": "9O1ydJcg301dLmSHl+mW",
+							"_parent": {
+								"$ref": "Ir2Vwda+7gFePCB88I7Y"
+							},
+							"source": {
+								"$ref": "Ir2Vwda+7gFePCB88I7Y"
+							},
+							"target": {
+								"$ref": "YYCJRRf6xsJAi0+gip/z"
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLActor",
+					"_id": "Z2g+G3ccP8FbZ2Jn9QrR",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "Administrator",
+					"documentation": "A bank staff member who investigates transactions and handles dispute flags.",
+					"ownedElements": [
+						{
+							"_type": "UMLAssociation",
+							"_id": "uyz5dlkS8WKyksmJoyHG",
+							"_parent": {
+								"$ref": "Z2g+G3ccP8FbZ2Jn9QrR"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "qIwcKs4vr9Ei5HsmGHW+",
+								"_parent": {
+									"$ref": "uyz5dlkS8WKyksmJoyHG"
+								},
+								"reference": {
+									"$ref": "Z2g+G3ccP8FbZ2Jn9QrR"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "2xKM0kpSzuChrL+pBHwS",
+								"_parent": {
+									"$ref": "uyz5dlkS8WKyksmJoyHG"
+								},
+								"reference": {
+									"$ref": "Mkzh9fNVmndCcHSOkQ2q"
+								}
+							}
+						},
+						{
+							"_type": "UMLAssociation",
+							"_id": "GD4ZjYxyVh0lMw3pGAgy",
+							"_parent": {
+								"$ref": "Z2g+G3ccP8FbZ2Jn9QrR"
+							},
+							"end1": {
+								"_type": "UMLAssociationEnd",
+								"_id": "wyK8289Z0XyTmXuTD8/y",
+								"_parent": {
+									"$ref": "GD4ZjYxyVh0lMw3pGAgy"
+								},
+								"reference": {
+									"$ref": "Z2g+G3ccP8FbZ2Jn9QrR"
+								}
+							},
+							"end2": {
+								"_type": "UMLAssociationEnd",
+								"_id": "MXr8/YqLnI6cdk8Tvxt4",
+								"_parent": {
+									"$ref": "GD4ZjYxyVh0lMw3pGAgy"
+								},
+								"reference": {
+									"$ref": "/vyhoJE5OIevnyy9WtT1"
+								}
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "VP9LzHdlLj6eV0XecRZ/",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-01 Register User",
+					"documentation": "FR-01. A visitor creates a user with name, unique e-mail and a password meeting the policy."
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "2WkHFJ+0CvkIiVkXzr1P",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-02 Log In and Log Out",
+					"documentation": "FR-02. Log in with e-mail and password; five consecutive failures block login for 24 hours (blocked_until, checked on each attempt). Log out; sessions expire after 30 minutes without a request."
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "niFTDlVqHy153vF4p9Q2",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-03 Manage Personal Accounts",
+					"documentation": "FR-03. Open, list, rename and close personal spending and savings accounts."
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "yGr2dWSGb16EmjvjqcIl",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-04 Set Up Group from Template",
+					"documentation": "FR-04. Create a group from the Couple, Club, Church or Custom template."
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "sV8x2fQaMQJ72EF4Kpq4",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-05 Manage Router",
+					"documentation": "FR-05. Create and edit a personal router or a group number: ordered rules and a remainder account."
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "VMduAu002Hfq1x+2+WGM",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-06 Manage Group",
+					"documentation": "FR-06. Owner invites members (who join on accepting), manages visibility, roles, accounts and the group number; members can leave."
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "XyuNHUxc35wbjV/UqXq/",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-07 Transfer Funds",
+					"documentation": "FR-07. Transfer from an own personal account to another account by number, subject to the flow rules.",
+					"ownedElements": [
+						{
+							"_type": "UMLInclude",
+							"_id": "anSHuEgIGC/d5zLYnjSR",
+							"_parent": {
+								"$ref": "XyuNHUxc35wbjV/UqXq/"
+							},
+							"source": {
+								"$ref": "XyuNHUxc35wbjV/UqXq/"
+							},
+							"target": {
+								"$ref": "aHaNH/uyX4JaEWDi2G2L"
+							}
+						}
+					],
+					"extensionPoints": [
+						{
+							"_type": "UMLExtensionPoint",
+							"_id": "gUzQrbRyj88vy528QdhZ",
+							"_parent": {
+								"$ref": "XyuNHUxc35wbjV/UqXq/"
+							},
+							"name": "Destination is a router"
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "MSserC0AM+vu3m8PGStf",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-08 Deposit Funds",
+					"documentation": "FR-08. Deposit fictitious funds to an own spending account or own router.",
+					"ownedElements": [
+						{
+							"_type": "UMLInclude",
+							"_id": "JevfDrGswTlylzfxor1X",
+							"_parent": {
+								"$ref": "MSserC0AM+vu3m8PGStf"
+							},
+							"source": {
+								"$ref": "MSserC0AM+vu3m8PGStf"
+							},
+							"target": {
+								"$ref": "aHaNH/uyX4JaEWDi2G2L"
+							}
+						}
+					],
+					"extensionPoints": [
+						{
+							"_type": "UMLExtensionPoint",
+							"_id": "OBgD3SE5VgB+5UT/fVAE",
+							"_parent": {
+								"$ref": "MSserC0AM+vu3m8PGStf"
+							},
+							"name": "Destination is a router"
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "fWWdxZ52T9weUwUITiOl",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-09 Make Payment or Withdrawal",
+					"documentation": "FR-09. Pay an external payee from an own spending account, or from a group account as owner or payer.",
+					"ownedElements": [
+						{
+							"_type": "UMLInclude",
+							"_id": "UaYC3SWB4IohQlL7edyu",
+							"_parent": {
+								"$ref": "fWWdxZ52T9weUwUITiOl"
+							},
+							"source": {
+								"$ref": "fWWdxZ52T9weUwUITiOl"
+							},
+							"target": {
+								"$ref": "aHaNH/uyX4JaEWDi2G2L"
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "me2cZX/Vs1ZpqnAqkCAL",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-10 View History and Contributions",
+					"documentation": "FR-10. List transactions with actor and cause; show contributions within the group’s visibility; public page.",
+					"ownedElements": [
+						{
+							"_type": "UMLInclude",
+							"_id": "XwRcgtJi4wcQmHror4fA",
+							"_parent": {
+								"$ref": "me2cZX/Vs1ZpqnAqkCAL"
+							},
+							"source": {
+								"$ref": "me2cZX/Vs1ZpqnAqkCAL"
+							},
+							"target": {
+								"$ref": "p7PsisZrlfO2Twacx2cr"
+							}
+						}
+					],
+					"extensionPoints": [
+						{
+							"_type": "UMLExtensionPoint",
+							"_id": "Zn6cIMEYpa/JZj384Bwu",
+							"_parent": {
+								"$ref": "me2cZX/Vs1ZpqnAqkCAL"
+							},
+							"name": "Transaction selected"
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "jSeeKIsuSG/NBAjjupYB",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-11 Flag Unauthorised Transaction",
+					"documentation": "FR-11. Flag a transaction as unauthorised and follow the flag’s status.",
+					"ownedElements": [
+						{
+							"_type": "UMLExtend",
+							"_id": "ha1FV58301ckc0WnsFBO",
+							"_parent": {
+								"$ref": "jSeeKIsuSG/NBAjjupYB"
+							},
+							"source": {
+								"$ref": "jSeeKIsuSG/NBAjjupYB"
+							},
+							"target": {
+								"$ref": "me2cZX/Vs1ZpqnAqkCAL"
+							},
+							"extensionLocations": [
+								{
+									"$ref": "Zn6cIMEYpa/JZj384Bwu"
+								}
+							]
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "Mkzh9fNVmndCcHSOkQ2q",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-12 Investigate Transactions",
+					"documentation": "FR-12. Administrator searches transactions and resolves flags; personal details masked.",
+					"extensionPoints": [
+						{
+							"_type": "UMLExtensionPoint",
+							"_id": "FstR4wOHv7ZratuyffW5",
+							"_parent": {
+								"$ref": "Mkzh9fNVmndCcHSOkQ2q"
+							},
+							"name": "Personal details needed"
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "/vyhoJE5OIevnyy9WtT1",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "UC-13 Manage Data-Access Consent",
+					"documentation": "FR-13. Administrator requests consent for a flag; client grants or denies; 72-hour expiry checked by timestamp.",
+					"ownedElements": [
+						{
+							"_type": "UMLExtend",
+							"_id": "HAEoCPJCny5muC4QKbIC",
+							"_parent": {
+								"$ref": "/vyhoJE5OIevnyy9WtT1"
+							},
+							"source": {
+								"$ref": "/vyhoJE5OIevnyy9WtT1"
+							},
+							"target": {
+								"$ref": "Mkzh9fNVmndCcHSOkQ2q"
+							},
+							"extensionLocations": [
+								{
+									"$ref": "FstR4wOHv7ZratuyffW5"
+								}
+							]
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "aHaNH/uyX4JaEWDi2G2L",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "INC-01 Validate Money Movement",
+					"documentation": "Included use case (no own FR). Checks amount, account state, actor rights and the flow rules of Table II, the deposit limit, and that a group account does not go below zero."
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "53njHuHRv9ZtciX1RWa9",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "INC-02 Split Amount by Router",
+					"documentation": "Extension (no own FR). Splits an amount arriving at a router by its rules (DR-05), atomically with the incoming amount.",
+					"ownedElements": [
+						{
+							"_type": "UMLExtend",
+							"_id": "/W1IlkDWUGaY+ODct+KC",
+							"_parent": {
+								"$ref": "53njHuHRv9ZtciX1RWa9"
+							},
+							"source": {
+								"$ref": "53njHuHRv9ZtciX1RWa9"
+							},
+							"target": {
+								"$ref": "XyuNHUxc35wbjV/UqXq/"
+							},
+							"extensionLocations": [
+								{
+									"$ref": "gUzQrbRyj88vy528QdhZ"
+								}
+							]
+						},
+						{
+							"_type": "UMLExtend",
+							"_id": "L0tO4U5jzBcU9refMcCD",
+							"_parent": {
+								"$ref": "53njHuHRv9ZtciX1RWa9"
+							},
+							"source": {
+								"$ref": "53njHuHRv9ZtciX1RWa9"
+							},
+							"target": {
+								"$ref": "MSserC0AM+vu3m8PGStf"
+							},
+							"extensionLocations": [
+								{
+									"$ref": "OBgD3SE5VgB+5UT/fVAE"
+								}
+							]
+						}
+					]
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "p7PsisZrlfO2Twacx2cr",
+					"_parent": {
+						"$ref": "nown+4ofvhJV53kdTpdo"
+					},
+					"name": "INC-03 Apply Contribution Visibility",
+					"documentation": "Included use case (no own FR). Limits per-member contributions to what the group’s visibility allows (DR-07)."
+				}
+			]
+		}
+	]
+}

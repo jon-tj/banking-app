@@ -61,6 +61,7 @@ const SCREENS = [
   ['20-pay-blocked', 'jiho', '/pay?from=club-mkt'],
   ['21-deposit', 'minji', '/deposit'],
   ['22-not-found', 'minji', '/group/does-not-exist'],
+  ['23-invitation', 'joon', '/home'],
 ];
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));

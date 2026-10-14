@@ -470,6 +470,13 @@ a.type:hover { border-color: var(--owt); }
 .ppl .type-ic { --c: var(--owt); --soft: var(--owt-soft); width: 36px; height: 36px; margin: 0; flex: none; }
 .bar > .btn:last-child { margin-left: auto; padding: 8px 14px; }
 
+.invites { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.invite-card { display: flex; flex-direction: column; gap: 10px; border-color: var(--owt); box-shadow: 0 0 0 3px var(--owt-soft), var(--shadow); }
+.invite-card p { margin: 0; }
+.ppl li.pending { opacity: .85; }
+.role.invited { color: var(--owt); background: var(--owt-soft); }
+.role.declined { color: var(--bad); background: var(--bad-soft); }
+
 /* ---------- toasts ---------- */
 
 .toasts { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 50; width: max-content; max-width: calc(100vw - 32px); }
