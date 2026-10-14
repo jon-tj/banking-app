@@ -26,7 +26,7 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "Visitor",
-					"documentation": "An unauthenticated person: registers, logs in, or views a group’s public contributor page.",
+					"documentation": "An unauthenticated person, who can only register a user. A visitor sees no group or account information.",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",
@@ -52,33 +52,6 @@
 								},
 								"reference": {
 									"$ref": "VP9LzHdlLj6eV0XecRZ/"
-								}
-							}
-						},
-						{
-							"_type": "UMLAssociation",
-							"_id": "wtJ5tx/2GXG2vFpZMkdJ",
-							"_parent": {
-								"$ref": "XY7LRwKveyCVXUgTBuY8"
-							},
-							"end1": {
-								"_type": "UMLAssociationEnd",
-								"_id": "8TW5ntB5u0Gu9l5pbVDs",
-								"_parent": {
-									"$ref": "wtJ5tx/2GXG2vFpZMkdJ"
-								},
-								"reference": {
-									"$ref": "XY7LRwKveyCVXUgTBuY8"
-								}
-							},
-							"end2": {
-								"_type": "UMLAssociationEnd",
-								"_id": "x2k3pm7XbmFW1NcaHfyI",
-								"_parent": {
-									"$ref": "wtJ5tx/2GXG2vFpZMkdJ"
-								},
-								"reference": {
-									"$ref": "me2cZX/Vs1ZpqnAqkCAL"
 								}
 							}
 						}
@@ -593,7 +566,6 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "UC-07 Transfer Funds",
-					"documentation": "FR-07. Transfer from an own personal account to another account by number, subject to the flow rules.",
 					"ownedElements": [
 						{
 							"_type": "UMLInclude",
@@ -609,16 +581,7 @@
 							}
 						}
 					],
-					"extensionPoints": [
-						{
-							"_type": "UMLExtensionPoint",
-							"_id": "gUzQrbRyj88vy528QdhZ",
-							"_parent": {
-								"$ref": "XyuNHUxc35wbjV/UqXq/"
-							},
-							"name": "Destination is a router"
-						}
-					]
+					"documentation": "FR-07. Transfer from an own personal account to another account by number, subject to the flow rules. Extension point: Destination is a router."
 				},
 				{
 					"_type": "UMLUseCase",
@@ -627,7 +590,6 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "UC-08 Deposit Funds",
-					"documentation": "FR-08. Deposit fictitious funds to an own spending account or own router.",
 					"ownedElements": [
 						{
 							"_type": "UMLInclude",
@@ -643,16 +605,7 @@
 							}
 						}
 					],
-					"extensionPoints": [
-						{
-							"_type": "UMLExtensionPoint",
-							"_id": "OBgD3SE5VgB+5UT/fVAE",
-							"_parent": {
-								"$ref": "MSserC0AM+vu3m8PGStf"
-							},
-							"name": "Destination is a router"
-						}
-					]
+					"documentation": "FR-08. Deposit fictitious funds to an own spending account or own router. Extension point: Destination is a router."
 				},
 				{
 					"_type": "UMLUseCase",
@@ -661,7 +614,6 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "UC-09 Make Payment or Withdrawal",
-					"documentation": "FR-09. Pay an external payee from an own spending account, or from a group account as owner or payer.",
 					"ownedElements": [
 						{
 							"_type": "UMLInclude",
@@ -676,7 +628,8 @@
 								"$ref": "aHaNH/uyX4JaEWDi2G2L"
 							}
 						}
-					]
+					],
+					"documentation": "FR-09. Pay an external payee from an own spending account, or from a group account as owner or payer."
 				},
 				{
 					"_type": "UMLUseCase",
@@ -685,7 +638,6 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "UC-10 View History and Contributions",
-					"documentation": "FR-10. List transactions with actor and cause; show contributions within the group’s visibility; public page.",
 					"ownedElements": [
 						{
 							"_type": "UMLInclude",
@@ -701,16 +653,7 @@
 							}
 						}
 					],
-					"extensionPoints": [
-						{
-							"_type": "UMLExtensionPoint",
-							"_id": "Zn6cIMEYpa/JZj384Bwu",
-							"_parent": {
-								"$ref": "me2cZX/Vs1ZpqnAqkCAL"
-							},
-							"name": "Transaction selected"
-						}
-					]
+					"documentation": "FR-10. List transactions with actor and cause; show contributions, ranked, within the group’s visibility. Only to the account owner or active members. Extension point: Transaction selected."
 				},
 				{
 					"_type": "UMLUseCase",
@@ -719,7 +662,6 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "UC-11 Flag Unauthorised Transaction",
-					"documentation": "FR-11. Flag a transaction as unauthorised and follow the flag’s status.",
 					"ownedElements": [
 						{
 							"_type": "UMLExtend",
@@ -732,14 +674,10 @@
 							},
 							"target": {
 								"$ref": "me2cZX/Vs1ZpqnAqkCAL"
-							},
-							"extensionLocations": [
-								{
-									"$ref": "Zn6cIMEYpa/JZj384Bwu"
-								}
-							]
+							}
 						}
-					]
+					],
+					"documentation": "FR-11. Flag a transaction as unauthorised and follow the flag’s status."
 				},
 				{
 					"_type": "UMLUseCase",
@@ -748,17 +686,7 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "UC-12 Investigate Transactions",
-					"documentation": "FR-12. Administrator searches transactions and resolves flags; personal details masked.",
-					"extensionPoints": [
-						{
-							"_type": "UMLExtensionPoint",
-							"_id": "FstR4wOHv7ZratuyffW5",
-							"_parent": {
-								"$ref": "Mkzh9fNVmndCcHSOkQ2q"
-							},
-							"name": "Personal details needed"
-						}
-					]
+					"documentation": "FR-12. Administrator searches transactions and resolves flags; personal details masked. Extension point: Personal details needed."
 				},
 				{
 					"_type": "UMLUseCase",
@@ -767,7 +695,6 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "UC-13 Manage Data-Access Consent",
-					"documentation": "FR-13. Administrator requests consent for a flag; client grants or denies; 72-hour expiry checked by timestamp.",
 					"ownedElements": [
 						{
 							"_type": "UMLExtend",
@@ -780,14 +707,10 @@
 							},
 							"target": {
 								"$ref": "Mkzh9fNVmndCcHSOkQ2q"
-							},
-							"extensionLocations": [
-								{
-									"$ref": "FstR4wOHv7ZratuyffW5"
-								}
-							]
+							}
 						}
-					]
+					],
+					"documentation": "FR-13. Administrator requests consent for a flag; client grants or denies; 72-hour expiry checked by timestamp."
 				},
 				{
 					"_type": "UMLUseCase",
@@ -805,7 +728,6 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "INC-02 Split Amount by Router",
-					"documentation": "Extension (no own FR). Splits an amount arriving at a router by its rules (DR-05), atomically with the incoming amount.",
 					"ownedElements": [
 						{
 							"_type": "UMLExtend",
@@ -818,12 +740,7 @@
 							},
 							"target": {
 								"$ref": "XyuNHUxc35wbjV/UqXq/"
-							},
-							"extensionLocations": [
-								{
-									"$ref": "gUzQrbRyj88vy528QdhZ"
-								}
-							]
+							}
 						},
 						{
 							"_type": "UMLExtend",
@@ -836,14 +753,10 @@
 							},
 							"target": {
 								"$ref": "MSserC0AM+vu3m8PGStf"
-							},
-							"extensionLocations": [
-								{
-									"$ref": "OBgD3SE5VgB+5UT/fVAE"
-								}
-							]
+							}
 						}
-					]
+					],
+					"documentation": "Extension (no own FR). Splits an amount arriving at a router by its rules (DR-05), atomically with the incoming amount."
 				},
 				{
 					"_type": "UMLUseCase",

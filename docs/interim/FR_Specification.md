@@ -24,7 +24,7 @@ These rules apply to every functional requirement and are not repeated in each o
 
 | ID | Rule |
 |----|------|
-| CR-01 | Every function except FR-01, logging in (FR-02) and the public page (FR-10) requires a valid session. |
+| CR-01 | Every function except FR-01 and logging in (FR-02) requires a valid session. A visitor can only register. |
 | CR-02 | Every request is authorised on the server, regardless of what the user interface shows or hides (NFR-03). A request the actor is not allowed to make is rejected and changes nothing. |
 | CR-03 | Every change of data is recorded with the acting user and a timestamp. |
 | CR-04 | An operation that fails validation, or fails part-way, changes nothing: no transaction, balance, membership or setting is partly saved (DR-02). |
@@ -44,7 +44,7 @@ These rules apply to every functional requirement and are not repeated in each o
 | FR-07 | Transfer Funds | UC-07 | Must | P4 | DR-01 to DR-06 | 17, 18 |
 | FR-08 | Deposit Funds | UC-08 | Must | P1 | DR-02 to DR-05 | 21 |
 | FR-09 | Make Payment or Withdrawal | UC-09 | Must | P4 | DR-01 to DR-04, DR-06 | 19, 20 |
-| FR-10 | View History and Contributions | UC-10 | Must | P3, P4 | DR-05, DR-07 | 04, 06–10, 15 |
+| FR-10 | View History and Contributions | UC-10 | Must | P3, P4 | DR-05, DR-07 | 04, 06–10 |
 | FR-11 | Flag Unauthorised Transaction | UC-11 | Should | P6 | DR-04 | — |
 | FR-12 | Investigate Transactions | UC-12 | Should | P6, P7 | — | — |
 | FR-13 | Manage Data-Access Consent | UC-13 | Should | P7 | — | — |
@@ -133,10 +133,10 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-04.3** **Club** with budgets Marketing 20 %, Materials 30 % and Joint exercises 50 % creates:
   - three OWT accounts;
   - a group router with the rules 20 % → Marketing and 30 % → Materials, and Joint exercises as remainder;
-  - visibility *public*.
+  - visibility *members*.
 - **AC-04.4** Club budgets adding up to 90 % or 110 %, or a budget without a name, are rejected and nothing is created.
 - **AC-04.5** **Church** creates one OWT account with visibility *private*. **Custom** creates one OWT account with the visibility the client chose.
-- **AC-04.6** Changing a proposed value before confirming (for example, setting a Club's visibility to *members*) is reflected in the created group.
+- **AC-04.6** Changing a proposed value before confirming (for example, setting a Club's visibility to *private*) is reflected in the created group.
 - **AC-04.7** After creation, every part of the group can be changed with FR-05 and FR-06. A group's template has no effect on any later behaviour.
 
 ### FR-05 Manage Router
@@ -168,7 +168,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 |---|---|
 | **Use case** | UC-06 · **Priority** Must |
 | **Actor** | Group owner; Member (invited client accepting or declining, or member leaving) |
-| **Requirement** | The system shall let a group owner do the following: invite registered users as payer or contributor, and withdraw pending invitations; change members' roles and remove members; set the contribution visibility to *public*, *members* or *private*; add OWT accounts and close empty ones; create a group number. It shall show an invited user the group's name, the offered role and the group's visibility, and make the user a member only when they accept. It shall let a member who is not the owner leave the group. |
+| **Requirement** | The system shall let a group owner do the following: invite registered users as payer or contributor, and withdraw pending invitations; change members' roles and remove members; set the contribution visibility to *members* or *private*; add OWT accounts and close empty ones; create a group number. It shall show an invited user the group's name, the offered role and the group's visibility, and make the user a member only when they accept. It shall let a member who is not the owner leave the group. |
 | **Inputs** | User and role; invitation answer; new role; visibility; account name; close request; leave request |
 | **Outputs** | Updated group; invitation shown to the invited user; change log entries |
 | **Business rules** | DR-07, NFR-09, CR-03 |
@@ -178,7 +178,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-06.2** The invitation shows the group's name, the offered role and the group's visibility with its explanation.
 - **AC-06.3** Accepting makes the user an active member with the offered role. Declining removes the pending invitation, the owner sees that it was declined, and the owner may invite the user again.
 - **AC-06.4** After the owner withdraws a pending invitation, the invited user no longer sees it.
-- **AC-06.5** A change of visibility applies to the next page any member or visitor opens (FR-10).
+- **AC-06.5** A change of visibility applies to the next page any member opens (FR-10).
 - **AC-06.6** Changing a member from contributor to payer lets them pay from the group's accounts straight away (FR-09). Changing back removes this.
 - **AC-06.7** Closing a group account is rejected if any of these holds: its balance is not ₩0, a router rule or remainder points to it, or it is the group's only account.
 - **AC-06.8** A member who is not the owner cannot invite, change roles, change visibility, or add or close accounts. The server rejects such requests.
@@ -253,23 +253,23 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 | | |
 |---|---|
 | **Use case** | UC-10 · **Priority** Must |
-| **Actor** | Client, Member; Visitor (public page) |
-| **Requirement** | The system shall list the transactions of a personal account to its owner, and of a group's accounts to the group's active members. The list shall be newest first and show for each entry the date, amount, counterparty and acting user. It shall be filterable by period, type and counterparty. For groups, the system shall show each member's contributions, credited to the actor of the incoming amount, as far as the group's visibility allows (DR-07). For a group with visibility *public*, it shall offer a public page without login showing the group's name and number, the total received, and the five largest contributors, with ties ordered by earliest contribution. |
-| **Inputs** | Account or group; filters; public page link |
-| **Outputs** | Transaction list; contributions graph and table; public page |
+| **Actor** | Client, Member |
+| **Requirement** | The system shall list the transactions of a personal account to its owner, and of a group's accounts to the group's active members. The list shall be newest first and show for each entry the date, amount, counterparty and acting user. It shall be filterable by period, type and counterparty. For groups, the system shall show each member's contributions, credited to the actor of the incoming amount, as far as the group's visibility allows (DR-07). Contributions shall be ranked by total, with equal totals ordered by earliest contribution. The system shall show no information about a group to anyone who is not an active member. |
+| **Inputs** | Account or group; filters |
+| **Outputs** | Transaction list; contributions graph and table |
 | **Business rules** | DR-05, DR-07, INC-03, NFR-09 |
 
 **Acceptance criteria**
 - **AC-10.1** The list contains every transaction of the account, newest first, each with date, amount, counterparty and acting user.
 - **AC-10.2** A transfer caused by a router shows the incoming amount that caused it. Dues paid to a club number appear under the member who paid them, not the router owner.
 - **AC-10.3** Filtering by a period, by type (all, money in, payments) or by counterparty returns exactly the matching entries.
-- **AC-10.4** Visibility *members* or *public*: every member sees every member's contributions with names.
+- **AC-10.4** Visibility *members*: every member sees every member's contributions with names.
 - **AC-10.5** Visibility *private*:
   - a contributor sees their own contributions with their name, and other members' contributions as "a member" with amount and date;
   - in the contributions graph and table, the other members are shown only as one total;
   - the owner and payers see every contribution with names.
-- **AC-10.6** The public page of a *public* group opens without login and lists the five largest contributors. When two members have the same total, the one whose first contribution is earlier is listed first.
-- **AC-10.7** The public link of a *members* or *private* group shows only that its contributions are not public.
+- **AC-10.6** The contributions table lists members by total, largest first. When two members have the same total, the one whose first contribution is earlier is listed first.
+- **AC-10.7** No page or server endpoint returns a group's name, balance, transactions or contributions to a visitor, to a registered user who is not a member, or to an invited user who has not accepted. The only exception is the invitation itself (AC-06.2).
 - **AC-10.8** A user without access to an account or group gets the same "not found" response whether or not it exists.
 - **AC-10.9** Viewing changes no data.
 

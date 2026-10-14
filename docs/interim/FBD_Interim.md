@@ -34,7 +34,7 @@ Clickable prototype: [`/demo`](../../demo)
 | Shared accounts | Ordinary accounts with delegates | One-way transfer (OWT) accounts: money enters only by transfer and leaves only as a payment | Every won in a shared account can be traced to the member who sent it |
 | Automatic contributions | None | Routers: a virtual account number that splits every incoming amount by rules | Couples and members contribute from each paycheck without remembering to |
 | Budgets inside a group | None | Subaccounts: a group can hold several OWT accounts, fed by a group router | A club can keep marketing, materials and joint exercises apart |
-| Transparency | Not addressed | Contribution visibility per group: public, members or private | Clubs want to recognise their largest contributors; churches want giving to stay private |
+| Transparency | Not addressed | Contribution visibility per group: members or private; group details only for invited members | Clubs want to recognise their largest contributors; churches want giving to stay private |
 | Setup | Manual | Account system templates: Couple, Club, Church, Custom | One step creates the right accounts, router and settings |
 | Payments by others | Owner only (revised UC-06) | Owner of a personal account, or a payer of a group | The treasurer and the partner must be able to pay bills |
 | Use cases | 11 | 13 | Router, groups and templates added; permission management replaced |
@@ -46,13 +46,13 @@ Login lockout, dispute flags, administrator investigation and data-access consen
 
 ## Summary
 
-This document describes a web-based digital banking system in which people manage money together with fictitious funds. It is built from three simple building blocks. **Personal accounts** belong to one user. **One-way transfer (OWT) accounts** belong to a group: money can only flow in, by transfer from a member, and can only leave as a payment made by a member with pay rights. **Routers** are virtual account numbers that hold no money and split every incoming amount between accounts by a list of rules. On top of these blocks, **account system templates** set up a couple's household account, a club with several budgets, or a church fund in one step, and each group chooses whether contributions are public, visible to members, or private. Every transaction records who performed it. The system comprises thirteen use cases and ten persistent data entities, and it is developed with the Scrum framework from requirements and UML-based design to implementation by AI-assisted vibe coding and deployment as a public web application.
+This document describes a web-based digital banking system in which people manage money together with fictitious funds. It is built from three simple building blocks. **Personal accounts** belong to one user. **One-way transfer (OWT) accounts** belong to a group: money can only flow in, by transfer from a member, and can only leave as a payment made by a member with pay rights. **Routers** are virtual account numbers that hold no money and split every incoming amount between accounts by a list of rules. On top of these blocks, **account system templates** set up a couple's household account, a club with several budgets, or a church fund in one step, and each group chooses whether its members can see who contributed what. Only members who have accepted an invitation see anything of a group. Every transaction records who performed it. The system comprises thirteen use cases and ten persistent data entities, and it is developed with the Scrum framework from requirements and UML-based design to implementation by AI-assisted vibe coding and deployment as a public web application.
 
 ## I. Necessity of the Proposed System
 
 Banking is the canonical transaction-processing domain. Every operation that changes a balance must be atomic, must leave the data in a consistent state, and must remain auditable afterwards. Because these requirements are strict yet well understood, a banking system is an ideal subject for experiencing the complete software development life cycle, in which a defect in requirements or design propagates visibly into the delivered system [1], [2].
 
-Beyond its pedagogical value, the system addresses a practical need. Much of everyday money is shared: a couple's rent and groceries, a hiking club's dues, a church's building fund. Korean banks already offer group accounts, as reviewed in Section III-B, but these services treat a group account as one pot with a list of members. They do not help members put money in automatically when their income arrives, they do not let a group divide its money into budgets, and they apply the same transparency to every group, although a club that wants to thank its largest contributors publicly and a church whose members give anonymously have opposite needs.
+Beyond its pedagogical value, the system addresses a practical need. Much of everyday money is shared: a couple's rent and groceries, a hiking club's dues, a church's building fund. Korean banks already offer group accounts, as reviewed in Section III-B, but these services treat a group account as one pot with a list of members. They do not help members put money in automatically when their income arrives, they do not let a group divide its money into budgets, and they apply the same transparency to every group, although a club that wants its members to see and thank its largest contributors and a church whose members give anonymously have opposite needs.
 
 The proposed system meets these needs with a small number of general rules instead of special features for each kind of group. A couple, a club and a church use the same three building blocks, configured differently by a template. This keeps the logic simple enough to specify precisely, which matters for a project whose code is generated from its specifications. It requires no integration with real financial networks, which keeps the scope realistic for a single semester.
 
@@ -74,7 +74,7 @@ Consider three groups.
 
 **A couple.** Minji and Joon share rent, utilities and groceries. Each payday, each of them must remember to transfer their share to a joint account. Amounts are agreed once but transferred by hand every month, and when one of them forgets, the rent payment fails or the other covers it.
 
-**A club.** Seoul Trail Club collects monthly dues into an account managed by its treasurer, Hana. The money pays for promotion, equipment and shared hikes, but it sits in one pot, so the club cannot see how much is left for each purpose without a separate spreadsheet. The club would like to thank its most generous members publicly, but has no record of who contributed what other than the transaction list.
+**A club.** Seoul Trail Club collects monthly dues into an account managed by its treasurer, Hana. The money pays for promotion, equipment and shared hikes, but it sits in one pot, so the club cannot see how much is left for each purpose without a separate spreadsheet. The club would like to thank its most generous members in front of the other members, but has no record of who contributed what other than the transaction list.
 
 **A church.** Grace Church collects offerings for its building fund. Members give at different levels and many prefer that nobody, including other members, sees how much they give. The treasurer still needs a full record for accountability.
 
@@ -95,7 +95,7 @@ Both services confirm that shared accounts are a real and widespread need. Both 
 
 - **P1 Manual contributions.** Members must remember to transfer their share each time income arrives.
 - **P2 One pot for many purposes.** A group cannot keep separate budgets without separate, unconnected accounts or spreadsheets.
-- **P3 One transparency rule for all groups.** Groups cannot choose whether individual contributions are public, shared among members, or private.
+- **P3 One transparency rule for all groups.** Groups cannot choose whether members can see each other's contributions or not.
 - **P4 Weak accountability.** It is not always clear who put money into a shared account and who took it out.
 - **P5 Complex setup.** Combining accounts, members and automatic transfers correctly is too much work for an ordinary user.
 - **P6 No dispute channel.** Users cannot flag a transaction they did not initiate and follow its resolution within the system.
@@ -117,7 +117,7 @@ Both services confirm that shared accounts are a real and widespread need. Both 
 
 ### D. Scope and Boundaries
 
-**In scope:** user registration and authentication; personal spending and savings accounts; groups with OWT accounts and subaccounts; personal and group routers; account system templates; contribution visibility, including a public contributor page; internal transfers; simulated deposits; payments and withdrawals recorded on the sender side; transaction history; dispute flags; and administrator investigation under client consent.
+**In scope:** user registration and authentication; personal spending and savings accounts; groups with OWT accounts and subaccounts; personal and group routers; account system templates; contribution visibility within a group; internal transfers; simulated deposits; payments and withdrawals recorded on the sender side; transaction history; dispute flags; and administrator investigation under client consent.
 
 **Out of scope:** real money, integration with external banks or card networks, recipient-side processing of external payments, scheduled or recurring transfers (routers act only when money arrives), interest, loans, foreign currencies, native mobile applications, tax receipts for donations, and regulatory identity verification beyond what a demonstration requires.
 
@@ -152,7 +152,7 @@ A **group** is a set of members together with one or more OWT accounts, an optio
 
 | Actor | Description |
 |-------|-------------|
-| Visitor | An unauthenticated person: registers, logs in, or views a group's public contributor page. |
+| Visitor | An unauthenticated person, who can only register a user (UC-01). A visitor sees no group or account information. |
 | Client | A registered user who owns personal accounts and a personal router. |
 | Group owner | A client who owns a group, for example a treasurer. |
 | Member | A client who is a contributor or payer in a group owned by someone else. |
@@ -169,7 +169,7 @@ A **group** is a set of members together with one or more OWT accounts, an optio
 **UC-04 Set Up Group from Template.** A client creates a group by choosing a template, naming the group, and adjusting the proposed settings before confirming. The client becomes the group owner. The templates are:
 
 - **Couple:** one OWT account (for example "Our home"); the partner is invited as a payer and joins on accepting the invitation; visibility *members*. Each partner is offered a rule in their own personal router that sends a percentage or fixed amount of every income to the shared account.
-- **Club:** a group router whose number is given to members for dues, and OWT subaccounts with a proposed split (for example Marketing 20 %, Materials 30 %, Joint exercises 50 %); visibility *public*.
+- **Club:** a group router whose number is given to members for dues, and OWT subaccounts with a proposed split (for example Marketing 20 %, Materials 30 %, Joint exercises 50 %); visibility *members*, so members see who contributed most.
 - **Church:** one OWT account (for example "Building fund"); visibility *private*.
 - **Custom:** one OWT account; all settings chosen by the owner.
 
@@ -177,7 +177,7 @@ A template only creates ordinary groups, accounts, routers and rules, which can 
 
 **UC-05 Manage Router.** A client creates a personal router, or a group owner creates a group router. A router has its own account number, an ordered list of rules, and a remainder account. Each rule sends a percentage of the received amount, or a fixed amount, to a target account. Rules in a personal router may target the owner's personal accounts and OWT accounts of groups the owner is a member of; rules in a group router may target only that group's OWT accounts. The system shows a preview of how a sample amount would be split. Changes take effect for the next incoming amount.
 
-**UC-06 Manage Group.** The group owner invites registered users as contributors or payers. An invited user sees the group's name, their role and its contribution visibility, and becomes a member only on accepting the invitation; until then nothing is shared with them, and they can decline. The owner also changes a member's role, removes members, adds, renames or closes subaccounts (an OWT account can be closed only at a zero balance), and sets the contribution visibility to *public*, *members* or *private* (DR-07). Members can leave a group at any time. Every change is recorded.
+**UC-06 Manage Group.** The group owner invites registered users as contributors or payers. An invited user sees the group's name, their role and its contribution visibility, and becomes a member only on accepting the invitation; until then nothing is shared with them, and they can decline. The owner also changes a member's role, removes members, adds, renames or closes subaccounts (an OWT account can be closed only at a zero balance), and sets the contribution visibility to *members* or *private* (DR-07). Members can leave a group at any time. Every change is recorded.
 
 **UC-07 Transfer Funds.** A client transfers an amount from a personal account to another account, identified by its account number, subject to the flow rules of Table II: to any spending account, to the client's own savings accounts, to an OWT account or group router of a group the client is a member of, or to the client's own router. The system verifies that the amount is positive and that both accounts are open. The debit and credit are executed as one atomic transaction, and the record stores the acting user in addition to both accounts.
 
@@ -185,7 +185,7 @@ A template only creates ordinary groups, accounts, routers and rules, which can 
 
 **UC-09 Make Payment or Withdrawal.** The owner of a spending account, or the owner or a payer of a group, pays an external payee, identified by name and reference, from that account. As this is a demonstration system, payments are recorded only on the sender's side. A withdrawal is treated as a payment to the acting user. Payments from savings accounts are not possible. An OWT account cannot be paid below zero (DR-06).
 
-**UC-10 View History and Contributions.** The owner of an account, or a member of the group that holds it, lists its transactions, filtered by period, type or counterparty. Each entry shows the user who initiated it, and router transfers show the deposit that caused them. For OWT accounts, the system also shows the contributions per member, as far as the group's visibility setting allows (DR-07). For groups with visibility *public*, a public page shows the group name, the total received and the largest contributors, without logging in.
+**UC-10 View History and Contributions.** The owner of an account, or a member of the group that holds it, lists its transactions, filtered by period, type or counterparty. Each entry shows the user who initiated it, and router transfers show the deposit that caused them. For OWT accounts, the system also shows the contributions per member, as far as the group's visibility setting allows (DR-07). Group information is shown only to active members; there is no public view of a group.
 
 **UC-11 Flag Unauthorised Transaction.** A client flags a transaction on an owned account, or on an OWT account of a group the client owns, as unauthorised or not initiated by the client, stating a reason. The flag progresses through the states Open, Under Review and Resolved (confirmed or rejected), and the client can follow its status.
 
@@ -206,7 +206,7 @@ A template only creates ordinary groups, accounts, routers and rules, which can 
 | UC-07 | Transfer Funds | Client, Member | P4 |
 | UC-08 | Deposit Funds | Client | P1 |
 | UC-09 | Make Payment or Withdrawal | Client, Group owner, Member (payer) | P4 |
-| UC-10 | View History and Contributions | Client, Member, Visitor | P3, P4 |
+| UC-10 | View History and Contributions | Client, Member | P3, P4 |
 | UC-11 | Flag Unauthorised Transaction | Client, Group owner | P6 |
 | UC-12 | Investigate Transactions | Administrator | P6, P7 |
 | UC-13 | Manage Data-Access Consent | Client, Administrator | P7 |
@@ -217,7 +217,7 @@ The scenarios below follow the example users of the prototype.
 
 **S1 Couple.** Minji chooses the *Couple* template, names the account "Our home" and invites Joon as a payer; Joon sees that contributions are visible to members and accepts. Minji accepts the offered router rule "30 % of every income to Our home"; Joon sets "₩800,000 to Our home" in his own router. When Minji's salary of ₩3,400,000 arrives at her router, ₩1,020,000 goes to Our home and the rest to her spending account, in one transaction. Joon pays the rent from Our home; the history shows that Joon made the payment.
 
-**S2 Club.** Hana chooses the *Club* template for Seoul Trail Club and keeps the proposed subaccounts Marketing (20 %), Materials (30 %) and Joint exercises (50 %). Members transfer their ₩30,000 monthly dues to the club's router number, and each payment is split across the three subaccounts. Hana pays a cabin deposit from Joint exercises. Because the club's visibility is *public*, the club's public page lists its largest contributors.
+**S2 Club.** Hana chooses the *Club* template for Seoul Trail Club and keeps the proposed subaccounts Marketing (20 %), Materials (30 %) and Joint exercises (50 %). Members transfer their ₩30,000 monthly dues to the club's router number, and each payment is split across the three subaccounts. Hana pays a cabin deposit from Joint exercises. Because the club's visibility is *members*, every member sees the contributors ranked by how much they have paid in; nobody outside the club sees anything.
 
 **S3 Church.** Choi chooses the *Church* template for the Grace Church building fund. Members transfer offerings to the fund, some of them through a rule in their own router. Because the visibility is *private*, each member sees only their own giving and the fund's total, while Choi, as owner, sees every contribution.
 
@@ -254,7 +254,7 @@ The banking domain imposes rules that every function must respect:
 - **DR-04** A closed account can neither send nor receive funds, and a committed transaction is never modified or deleted. Corrections are made only through new transactions.
 - **DR-05** A router never holds money. When an amount arrives, its rules are applied in order: a percentage rule takes that percentage of the received amount, rounded down to whole won; a fixed rule takes its amount; each rule takes at most what is left; and whatever remains goes to the remainder account. The incoming amount and all resulting transfers are committed together or not at all, and each resulting transfer records the actor of the incoming amount as its actor (so a split through a group router is credited to the member who paid) and the incoming transaction as its cause.
 - **DR-06** Money enters an OWT account only by transfer, from a member's spending account or from a router, never by direct deposit, so every won can be traced to a member. It leaves only as a payment by the group's owner or a payer. An OWT account cannot be paid below zero, since no single person is liable for a group's debt.
-- **DR-07** Contribution visibility is one of: *public* — anyone can see the group's total and its largest contributors on the public page, and members see every member's contributions; *members* — members see every member's contributions; *private* — the owner and payers see every contribution; contributors see their own contributions with their name, the group's total, and other members' contributions only without a name, as "a member", with amount and date. Balances and payments are visible to all members in every case. On the public page, contributors with the same total are ordered by their earliest contribution.
+- **DR-07** Only active members of a group see any information about it: its accounts, balances, transactions and contributions. Visitors, registered users who are not members, and invited users who have not accepted see nothing beyond the invitation itself. Within the group, contribution visibility is one of: *members* — every member sees every member's contributions with names, ranked by total, with equal totals ordered by earliest contribution; *private* — the owner and payers see every contribution; contributors see their own contributions with their name, the group's total, and other members' contributions only without a name, as "a member", with amount and date. Balances and payments are visible to all members in every case.
 
 ### G. Anticipated Data Model
 
@@ -387,7 +387,7 @@ The regular meeting every Wednesday from 15:30 to 17:00 serves as the team's syn
 | ID | Risk | Likelihood | Impact | Mitigation |
 |----|------|------------|--------|------------|
 | R1 | Generated code differs between runs, so the final prompt is not reproducible | High | High | Derive prompts directly from the baselined specifications, version every prompt, and run regeneration tests at each iteration (WBS 5.4) |
-| R2 | Templates and group features grow beyond the planned scope | Medium | High | Templates only configure the three building blocks and add no rules of their own; freeze the four templates and three visibility levels at the requirements baseline (M2) |
+| R2 | Templates and group features grow beyond the planned scope | Medium | High | Templates only configure the three building blocks and add no rules of their own; freeze the four templates and two visibility levels at the requirements baseline (M2) |
 | R3 | Router splitting produces rounding or atomicity errors | Medium | High | Specify the splitting algorithm exactly (DR-05), store money as integers, and test sums against the ledger for every router deposit |
 | R4 | Midterm examinations reduce available effort | High | Medium | Plan a lighter Sprint 2 around Week 8 and keep Week 14 free of development work |
 | R5 | The prototype and the specification drift apart | Medium | Medium | Review the prototype against the use cases at every sprint review and regenerate the key-screen captures with the UI review script |

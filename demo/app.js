@@ -10,7 +10,7 @@
    ========================================================= */
 
 const STORE = 'fbd-bank-demo';
-const VERSION = 3;
+const VERSION = 4;
 const DAY = 864e5;
 const DEPOSIT_LIMIT = 10000000; // per operation (UC-08)
 const PAGE_SIZE = 30;
@@ -60,7 +60,6 @@ const ICONS = {
   reset: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
   chevron: '<path d="m9 6 6 6-6 6"/>',
-  trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 21h8M9 17h6"/>',
 };
 
 function icon(name, cls = '') {
@@ -92,9 +91,9 @@ const TEMPLATES = {
   couple: { label: 'Couple', icon: 'heart', visibility: 'members', name: 'Our home',
     blurb: 'One household account for two. Each partner’s router sends part of every income there.',
     bullets: ['One shared account', 'Your partner can pay bills', 'Both see who put in what'] },
-  club: { label: 'Club', icon: 'users', visibility: 'public', name: 'My club',
+  club: { label: 'Club', icon: 'users', visibility: 'members', name: 'My club',
     blurb: 'Members pay dues to one club number, which splits them into budgets.',
-    bullets: ['Club number with split rules', 'One account per budget', 'Public page with top contributors'] },
+    bullets: ['Club number with split rules', 'One account per budget', 'Members see who contributed most'] },
   church: { label: 'Church', icon: 'gift', visibility: 'private', name: 'Building fund',
     blurb: 'A fund the congregation gives to. Each member sees only their own giving.',
     bullets: ['One fund account', 'Giving stays private', 'Treasurer sees every gift'] },
@@ -104,12 +103,10 @@ const TEMPLATES = {
 };
 
 const VIS = {
-  public: { label: 'Public', icon: 'globe',
-    text: 'Anyone can see the total and the largest contributors on the public page. Members see every member’s contributions.' },
   members: { label: 'Members', icon: 'users',
-    text: 'Members see every member’s contributions. Nothing is shown outside the group.' },
+    text: 'Members see every member’s contributions, ranked by total. Nobody outside the group sees anything.' },
   private: { label: 'Private', icon: 'lock',
-    text: 'Each member sees only their own contributions and the total. The owner and payers see every contribution.' },
+    text: 'Members cannot see who contributed what: each sees only their own contributions and the total. The owner and payers see every contribution.' },
 };
 
 const ROLES = { owner: 'Owner', payer: 'Payer', contributor: 'Contributor' };
@@ -171,7 +168,7 @@ const PERSONAS = [
   { id: 'minji', story: 'Shares “Our home” with Joon. Her salary goes through a router that feeds the home, her savings and the church fund.' },
   { id: 'joon', story: 'Minji’s partner and a payer on “Our home”. His router sends ₩800,000 of every paycheck there.' },
   { id: 'hana', story: 'Treasurer of Seoul Trail Club. Dues are split into Marketing, Materials and Joint exercises.' },
-  { id: 'jiho', story: 'Member of Seoul Trail Club. Pays dues to the club number and appears on its public page.' },
+  { id: 'jiho', story: 'Member of Seoul Trail Club. Pays dues to the club number and sees who contributed most.' },
   { id: 'choi', story: 'Treasurer of Grace Church. Giving to the building fund is private; members see only their own.' },
 ];
 
@@ -521,7 +518,6 @@ function activityInit(ids, hideOthers = false) {
    ========================================================= */
 
 function landing() {
-  const pub = state.groups.find(g => g.visibility === 'public');
   return {
     html: `
       <section class="landing">
@@ -531,7 +527,6 @@ function landing() {
           <p class="lead">A household account for two, a club with budgets, a church fund. Route part of every income automatically, choose who sees what, and always know who sent what.</p>
           <div class="row">
             <a class="btn ghost" href="#/signup">${icon('plus')} Create a new user</a>
-            ${pub ? `<a class="btn" href="#/public/${pub.id}">${icon('globe')} ${esc(pub.name)}’s public page</a>` : ''}
           </div>
         </div>
         <div class="personas">
@@ -926,7 +921,6 @@ function groupPage(gid, q) {
         { href: `#/transfer?to=${sel ? sel.id : rt ? rt.id : accts[0].id}`, ic: 'arrows', text: 'Contribute', primary: true },
         { href: `#/pay?from=${payFrom.id}`, ic: 'send', text: 'Pay', allowed: payer, why: payBlock(me, payFrom) },
         { href: `#/group/${g.id}/settings`, ic: 'sliders', text: g.owner === me ? 'Members & settings' : 'Members' },
-        ...(g.visibility === 'public' ? [{ href: `#/public/${g.id}`, ic: 'globe', text: 'Public page' }] : []),
       ])}
       <p class="note">${icon('funnel')}<span>Money can only flow into this group, by transfer from a member’s spending account or a router. It leaves only as payments by the owner and payers. <strong>${VIS[g.visibility].label}:</strong> ${VIS[g.visibility].text}</span></p>
 
@@ -1081,33 +1075,6 @@ function settingsPage(gid) {
         save(); go(`#/group/${g.id}/router`);
       });
     },
-  };
-}
-
-function publicPage(gid) {
-  const g = group(gid);
-  if (!g || g.visibility !== 'public') {
-    return notFound('This group’s contributions are not public.');
-  }
-  const { rows } = groupFlows(g, 'all');
-  const total = rows.reduce((s, r) => s + r.amount, 0);
-  const top = rows.filter(r => r.amount > 0).sort(byContribution).slice(0, 5);
-  return {
-    html: `
-      <div class="narrow wide public">
-        <div class="router-intro card">
-          <span class="type-ic big t-owt">${icon(TEMPLATES[g.template].icon)}</span>
-          <span class="chip v-public">${icon('globe')}Public page</span>
-          <h1 class="page-title">${esc(g.name)}</h1>
-          <p class="lead">${won(total)} received from ${rows.filter(r => r.amount > 0).length} members</p>
-          <p class="muted small">Members pay to <strong class="mono">${groupNumber(g)}</strong></p>
-        </div>
-        <section class="card">
-          <div class="side-head"><h3>${icon('trophy')} Largest contributors</h3><span class="muted small">All time</span></div>
-          <ol class="ppl big leaders">${top.map((r, i) => `<li><span class="rank">${i + 1}</span>${avatar(r.user)}<span class="grow"><strong>${esc(user(r.user).name)}</strong></span><strong class="num">${won(r.amount)}</strong></li>`).join('')}</ol>
-          <p class="muted small">Shown because ${esc(g.name)} has chosen public contributions. Members agree to this when they accept their invitation. Tied totals are ordered by earliest contribution.</p>
-        </section>
-      </div>`,
   };
 }
 
@@ -1721,14 +1688,13 @@ function render() {
   const q = new URLSearchParams(query || '');
   if (!state.me || !user(state.me)) state.me = null;
   let key = parts[0] || (state.me ? 'home' : 'login');
-  if (!state.me && !['signup', 'public'].includes(key)) key = 'login';
+  if (!state.me && key !== 'signup') key = 'login'; // a visitor can only register (UC-01)
   if (state.me && (key === 'login' || key === 'signup')) key = 'home';
 
   let page;
   switch (key) {
     case 'login': page = landing(); break;
     case 'signup': page = signup(); break;
-    case 'public': page = publicPage(parts[1]); break;
     case 'home': page = home(); break;
     case 'new': page = newAccount(); break;
     case 'setup': page = setupPage(q); break;

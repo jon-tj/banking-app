@@ -2,7 +2,7 @@
 
 Review of the clickable prototype in [`/demo`](../../demo) against the revised proposal for the interim report ([FBD_Interim.md](../interim/FBD_Interim.md)), October 14, 2026.
 
-**Summary.** The demo now follows the revised design: personal accounts, groups with one-way transfer (OWT) accounts and subaccounts, personal and group routers, templates (Couple, Club, Church, Custom) and contribution visibility (public, members, private), including a public contributor page. Seven of the thirteen use cases are covered fully and two partly. Login with lockout, dispute flags, administrator investigation and consent (UC-02, UC-11 to UC-13) are still missing.
+**Summary.** The demo now follows the revised design: personal accounts, groups with one-way transfer (OWT) accounts and subaccounts, personal and group routers, templates (Couple, Club, Church, Custom) and contribution visibility (*members* or *private*). Only active members see anything of a group; visitors can only register. Seven of the thirteen use cases are covered fully and two partly. Login with lockout, dispute flags, administrator investigation and consent (UC-02, UC-11 to UC-13) are still missing.
 
 An earlier version of this review covered the first demo, which used manager and contributor roles on individual accounts. That version is in the git history; its visual findings were fixed in this update (see section 4).
 
@@ -32,7 +32,7 @@ Each screen is saved as `<name>-desktop.png` and `<name>-mobile.png`.
 
 | Name | Screen | Viewed as | Use cases |
 |------|--------|-----------|-----------|
-| 01-login | Landing with example users and a link to the public club page | logged out | UC-02 (placeholder) |
+| 01-login | Landing with example users | logged out | UC-02 (placeholder) |
 | 02-signup | Create a user | logged out | UC-01 |
 | 03-home | Personal accounts, router summary, groups | Minji | UC-03, UC-05 |
 | 04-spending-account | Spending account with activity filters and the router rules that feed it | Minji | UC-03, UC-10 |
@@ -46,7 +46,6 @@ Each screen is saved as `<name>-desktop.png` and `<name>-mobile.png`.
 | 12-group-number | Group router (club number) split rules | Hana | UC-05 |
 | 13-setup-couple | Set up a group, Couple template | Minji | UC-04 |
 | 14-setup-club | Set up a group, Club template with budgets | Minji | UC-04 |
-| 15-public-page | Public page with the largest contributors | logged out | UC-10 |
 | 16-new-account | Open a personal account, with a link to group setup | Minji | UC-03 |
 | 17-transfer-to-club | Transfer to the club number | Ji-ho | UC-07 |
 | 18-transfer-blocked | Savings to a group is blocked | Minji | UC-07 |
@@ -71,7 +70,7 @@ Each screen is saved as `<name>-desktop.png` and `<name>-mobile.png`.
 | UC-07 Transfer Funds | ✅ To your own accounts, your groups, your router, a group number, or any spending account by its number. Savings → group is blocked. Amounts sent to a router or group number show their split before sending. |
 | UC-08 Deposit Funds | ✅ To your own spending account or router, with the per-deposit limit. Deposits to savings and group accounts are blocked. |
 | UC-09 Make Payment or Withdrawal | ✅ From your own spending accounts, or from a group account if you are its owner or a payer. Group accounts cannot be paid below zero. There is no separate withdrawal button. |
-| UC-10 View History and Contributions | ⚠️ Every entry shows who acted; contributions are named after the member. Filters for *all*, *money in* and *payments*, and a "show all" button. Contributions graph and table respect visibility; the public page lists the top five contributors. Filters by period and counterparty are still missing from the activity list. |
+| UC-10 View History and Contributions | ⚠️ Every entry shows who acted; contributions are named after the member. Filters for *all*, *money in* and *payments*, and a "show all" button. Contributions graph and table respect visibility and rank members by total (ties: earliest contribution first). Filters by period and counterparty are still missing from the activity list. |
 | UC-11 Flag Unauthorised Transaction | ❌ Missing. |
 | UC-12 Investigate Transactions | ❌ Missing; there is no administrator role. |
 | UC-13 Manage Data-Access Consent | ❌ Missing. |
@@ -108,13 +107,13 @@ Still open:
 1. **Private groups show each gift's amount and date** as "A member" (screen 10). *Decided October 14: keep this behaviour* (DR-07). No change needed.
 2. **The group page is long on phones** (screen 08 mobile, about five screens). The graph, the table and the activity list repeat much of the same information. Consider collapsing the contributions table, or moving activity to its own tab.
 3. **Invitations are accepted immediately.** A user added to a group, or invited as a partner by the Couple template, becomes a member without agreeing. *Decided October 14: invited users must accept* (UC-06 A7, NFR-09). **Fixed:** invitations are pending until accepted; the invitation shows the role and the group's visibility (screen 23), and the owner sees pending and declined invitations and can withdraw them (screen 11). The Couple template invites the partner the same way.
-4. **The public page shows ties in input order** (screen 15: four members with ₩90,000). *Decided October 14: earliest contribution first* (DR-07). **Fixed** (screen 15).
+4. **Tied contributors were listed in input order.** *Decided October 14: earliest contribution first* (DR-07). **Fixed** in the contributions table (screens 07, 08). The public page that first showed this was removed on October 14: only active members see a group's details.
 5. **No permission change log** (UC-06), and no withdrawal shortcut (UC-09).
 
 ---
 
 ## 5. Recommendations for the interim report
 
-1. Use screens 03, 06, 07, 10, 13–15 and 17 as the key UI screens; together they show all three building blocks, a template, and the three visibility levels.
+1. Use screens 03, 06, 07, 10, 13, 14, 17 and 23 as the key UI screens; together they show all three building blocks, the templates, both visibility levels and an invitation.
 2. Add static mock-ups for the missing use cases: login with lockout (UC-02), flagging a transaction and following its status (UC-11), the administrator's search with masked details (UC-12), and the consent request (UC-13).
 3. Show screen 23 (invitation) in the report next to the visibility screens, since it is where NFR-09 becomes visible to the user.

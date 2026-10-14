@@ -53,7 +53,6 @@ const SCREENS = [
   ['12-group-number', 'hana', '/group/g-club/router'],
   ['13-setup-couple', 'minji', '/setup'],
   ['14-setup-club', 'minji', '/setup?template=club'],
-  ['15-public-page', null, '/public/g-club'],
   ['16-new-account', 'minji', '/new'],
   ['17-transfer-to-club', 'jiho', '/transfer?to=rt-club'],
   ['18-transfer-blocked', 'minji', '/transfer?from=sv-minji&to=church'],

@@ -423,7 +423,6 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 
 /* ---------- groups, templates, visibility ---------- */
 
-.chip.v-public { color: var(--router); background: var(--router-soft); }
 .chip.v-members { color: var(--spending); background: var(--spending-soft); }
 .chip.v-private { color: var(--ink-2); background: #f1f5f9; }
 .acct-head.t-owt .chip.v-private { background: #fff; }
@@ -443,7 +442,7 @@ input:focus, select:focus { outline: none; border-color: var(--accent); box-shad
 a.type { color: var(--ink); text-decoration: none; border-style: dashed; }
 a.type:hover { border-color: var(--owt); }
 
-.vis-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px; }
+.vis-pick { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px; }
 .vis { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 2px solid var(--line); border-radius: 14px; cursor: pointer; position: relative; }
 .vis input { position: absolute; opacity: 0; }
 .vis.on, .vis:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
@@ -463,9 +462,6 @@ a.type:hover { border-color: var(--owt); }
 .narrow > section.card h3 { margin-bottom: 4px; }
 .hr-rules.light li { background: var(--router-soft); color: #155e75; }
 .hr-rules.light { margin: 8px 0 14px; }
-.leaders { padding: 0; }
-.rank { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--owt-soft); color: var(--owt); font-weight: 700; font-size: .8rem; flex: none; }
-.public .router-intro { gap: 10px; }
 .type-ic.big.t-owt { --c: var(--owt); --soft: var(--owt-soft); }
 .ppl .type-ic { --c: var(--owt); --soft: var(--owt-soft); width: 36px; height: 36px; margin: 0; flex: none; }
 .bar > .btn:last-child { margin-left: auto; padding: 8px 14px; }

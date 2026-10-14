@@ -24,36 +24,52 @@ const previewPath = args.includes('--preview') ? args[args.indexOf('--preview') 
 
 /* ---------- model content ---------- */
 
+const UC_H = 44, ACTOR_W = 100, ACTOR_H = 96;
+// StarUML widens a use case to fit its name on one line (bold Arial 13);
+// using the same width here keeps the layout and the preview truthful.
+const ucWidth = text => Math.round(text.length * 7.3 + 80);
+
 const ACTORS = [
-  { key: 'visitor', name: 'Visitor', x: 40, y: 40, doc: 'An unauthenticated person: registers, logs in, or views a group’s public contributor page.' },
-  { key: 'client', name: 'Client', x: 40, y: 473, doc: 'A registered user who owns personal accounts and a personal router.' },
-  { key: 'owner', name: 'Group owner', x: 180, y: 880, doc: 'A client who owns a group, for example a treasurer.' },
-  { key: 'member', name: 'Member', x: 60, y: 1000, doc: 'A client who is a contributor or payer in a group owned by someone else.' },
-  { key: 'admin', name: 'Administrator', x: 1200, y: 822, doc: 'A bank staff member who investigates transactions and handles dispute flags.' },
+  { key: 'visitor', name: 'Visitor', x: 60, y: 30, doc: 'An unauthenticated person, who can only register a user. A visitor sees no group or account information.' },
+  { key: 'client', name: 'Client', x: 70, y: 615, doc: 'A registered user who owns personal accounts and a personal router.' },
+  { key: 'owner', name: 'Group owner', x: 200, y: 1150, doc: 'A client who owns a group, for example a treasurer.' },
+  { key: 'member', name: 'Member', x: 40, y: 1260, doc: 'A client who is a contributor or payer in a group owned by someone else.' },
+  { key: 'admin', name: 'Administrator', x: 1530, y: 1112, doc: 'A bank staff member who investigates transactions and handles dispute flags.' },
 ];
 
-// cx, cy: centre of the ellipse on the diagram. The left column holds every
-// use case a Client takes part in, far enough from the actor that the
-// Client's lines do not cut through neighbouring use cases; the right column
-// holds the included use cases and the administrator's.
+const NAMES = {
+  'UC-01': 'Register User', 'UC-02': 'Log In and Log Out', 'UC-03': 'Manage Personal Accounts',
+  'UC-04': 'Set Up Group from Template', 'UC-05': 'Manage Router', 'UC-06': 'Manage Group',
+  'UC-07': 'Transfer Funds', 'UC-08': 'Deposit Funds', 'UC-09': 'Make Payment or Withdrawal',
+  'UC-10': 'View History and Contributions', 'UC-11': 'Flag Unauthorised Transaction',
+  'UC-12': 'Investigate Transactions', 'UC-13': 'Manage Data-Access Consent',
+  'INC-01': 'Validate Money Movement', 'INC-02': 'Split Amount by Router', 'INC-03': 'Apply Contribution Visibility',
+};
+
+// The Client's use cases have their centres on an arc around the Client, so
+// every line from the Client has its own angle and passes clear of the
+// neighbouring use cases. The radius is large because the ellipses are wide.
+const ARC = { cx: 120, cy: 653, r: 720, from: -40, to: 40 };
+const ARC_ORDER = ['UC-10', 'UC-11', 'UC-02', 'UC-03', 'UC-04', 'UC-05', 'UC-07', 'UC-08', 'UC-09', 'UC-13'];
+// The second and second-to-last use cases are moved right a little, so the
+// steepest lines (to UC-10 and UC-13) pass clear of their left ends.
+const NUDGE_X = { 'UC-11': 45, 'UC-09': 45 };
+const onArc = ARC_ORDER.map((key, i) => {
+  const th = (ARC.from + i * (ARC.to - ARC.from) / (ARC_ORDER.length - 1)) * Math.PI / 180;
+  return { key, cx: Math.round(ARC.cx + ARC.r * Math.cos(th)) + (NUDGE_X[key] || 0), cy: Math.round(ARC.cy + ARC.r * Math.sin(th)) };
+});
+
+// cx, cy: centre of the ellipse. The right column holds the supporting use
+// cases next to the use cases that use them, and the administrator's.
 const USE_CASES = [
-  { key: 'UC-01', name: 'Register User', cx: 660, cy: 60 },
-  { key: 'UC-10', name: 'View History and Contributions', cx: 660, cy: 142 },
-  { key: 'UC-11', name: 'Flag Unauthorised Transaction', cx: 660, cy: 224 },
-  { key: 'UC-02', name: 'Log In and Log Out', cx: 660, cy: 306 },
-  { key: 'UC-03', name: 'Manage Personal Accounts', cx: 660, cy: 388 },
-  { key: 'UC-04', name: 'Set Up Group from Template', cx: 660, cy: 470 },
-  { key: 'UC-05', name: 'Manage Router', cx: 660, cy: 552 },
-  { key: 'UC-07', name: 'Transfer Funds', cx: 660, cy: 634 },
-  { key: 'UC-08', name: 'Deposit Funds', cx: 660, cy: 716 },
-  { key: 'UC-09', name: 'Make Payment or Withdrawal', cx: 660, cy: 798 },
-  { key: 'UC-13', name: 'Manage Data-Access Consent', cx: 660, cy: 880 },
-  { key: 'UC-06', name: 'Manage Group', cx: 660, cy: 980 },
-  { key: 'INC-03', name: 'Apply Contribution Visibility', cx: 1010, cy: 142 },
-  { key: 'INC-02', name: 'Split Amount by Router', cx: 1010, cy: 590 },
-  { key: 'INC-01', name: 'Validate Money Movement', cx: 1010, cy: 730 },
-  { key: 'UC-12', name: 'Investigate Transactions', cx: 1010, cy: 820 },
-];
+  ...onArc,
+  { key: 'UC-01', cx: 500, cy: 70 },
+  { key: 'UC-06', cx: 560, cy: 1235 },
+  { key: 'INC-03', cx: 1300, cy: 190 },
+  { key: 'INC-02', cx: 1300, cy: 760 },
+  { key: 'INC-01', cx: 1300, cy: 975 },
+  { key: 'UC-12', cx: 1300, cy: 1215 },
+].map(u => ({ ...u, name: NAMES[u.key], w: ucWidth(`${u.key} ${NAMES[u.key]}`) }));
 
 const DOCS = {
   'UC-01': 'FR-01. A visitor creates a user with name, unique e-mail and a password meeting the policy.',
@@ -65,7 +81,7 @@ const DOCS = {
   'UC-07': 'FR-07. Transfer from an own personal account to another account by number, subject to the flow rules.',
   'UC-08': 'FR-08. Deposit fictitious funds to an own spending account or own router.',
   'UC-09': 'FR-09. Pay an external payee from an own spending account, or from a group account as owner or payer.',
-  'UC-10': 'FR-10. List transactions with actor and cause; show contributions within the group’s visibility; public page.',
+  'UC-10': 'FR-10. List transactions with actor and cause; show contributions, ranked, within the group’s visibility. Only to the account owner or active members.',
   'UC-11': 'FR-11. Flag a transaction as unauthorised and follow the flag’s status.',
   'UC-12': 'FR-12. Administrator searches transactions and resolves flags; personal details masked.',
   'UC-13': 'FR-13. Administrator requests consent for a flag; client grants or denies; 72-hour expiry checked by timestamp.',
@@ -76,7 +92,7 @@ const DOCS = {
 
 const assoc = (actor, ...ucs) => ucs.map(uc => ({ kind: 'assoc', from: actor, to: uc }));
 const RELATIONS = [
-  ...assoc('visitor', 'UC-01', 'UC-10'),
+  ...assoc('visitor', 'UC-01'),
   ...assoc('client', 'UC-02', 'UC-03', 'UC-04', 'UC-05', 'UC-07', 'UC-08', 'UC-09', 'UC-10', 'UC-11', 'UC-13'),
   ...assoc('owner', 'UC-06'),
   ...assoc('member', 'UC-06'),
@@ -93,12 +109,12 @@ const RELATIONS = [
   { kind: 'extend', from: 'UC-13', to: 'UC-12', point: 'Personal details needed' },
 ];
 
-const SUBJECT = { name: 'FBD Bank', left: 520, top: 0, width: 630, height: 1030 };
-const UC_W = 220, UC_H = 52, ACTOR_W = 100, ACTOR_H = 96;
+const SUBJECT = { name: 'FBD Bank', left: 370, top: 0, width: 1135, height: 1275 };
+const LABEL_DIST = 12; // px between an «include»/«extend» label and its line
 
 /* ---------- geometry ---------- */
 
-const ucBox = u => ({ left: u.cx - UC_W / 2, top: u.cy - UC_H / 2, width: UC_W, height: UC_H });
+const ucBox = u => ({ left: Math.round(u.cx - u.w / 2), top: u.cy - UC_H / 2, width: u.w, height: UC_H });
 const actorBox = a => ({ left: a.x, top: a.y, width: ACTOR_W, height: ACTOR_H });
 const nodes = new Map([
   ...ACTORS.map(a => [a.key, { ...a, kind: 'actor', box: actorBox(a), c: [a.x + ACTOR_W / 2, a.y + 38] }]),
@@ -111,13 +127,11 @@ for (const r of RELATIONS) {
 /* ---------- preview (SVG) ---------- */
 
 function clip(n, toward) {
-  // Point where the line from n's centre toward `toward` leaves n's shape.
+  // Point where the line from n's centre toward `toward` leaves n's bounding
+  // rectangle. StarUML ends lines there too, also for ellipses, so the
+  // preview shows the same gaps StarUML will.
   const [cx, cy] = n.c, dx = toward[0] - cx, dy = toward[1] - cy;
-  if (n.kind === 'uc') {
-    const a = UC_W / 2, b = UC_H / 2, t = 1 / Math.sqrt((dx * dx) / (a * a) + (dy * dy) / (b * b));
-    return [cx + dx * t, cy + dy * t];
-  }
-  const t = Math.min(Math.abs((ACTOR_W / 2) / (dx || 1e-9)), Math.abs((ACTOR_H / 2) / (dy || 1e-9)));
+  const t = Math.min(Math.abs((n.box.width / 2) / (dx || 1e-9)), Math.abs((n.box.height / 2) / (dy || 1e-9)));
   return [cx + dx * t, cy + dy * t];
 }
 
@@ -132,20 +146,24 @@ function preview() {
     const dashed = r.kind === 'include' || r.kind === 'extend';
     const head = r.kind === 'gen' ? 'url(#tri)' : dashed ? 'url(#open)' : '';
     s += `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="#444" ${dashed ? 'stroke-dasharray="6 4"' : ''} ${head ? `marker-end="${head}"` : ''}/>`;
-    if (dashed) s += `<text x="${(p[0] + q[0]) / 2}" y="${(p[1] + q[1]) / 2 - 4}" text-anchor="middle" font-size="11" fill="#555">«${r.kind}»</text>`;
+    if (dashed) {
+      // Same placement as the StarUML label: middle of the edge, LABEL_DIST to the side.
+      const mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2, L = Math.hypot(q[0] - p[0], q[1] - p[1]);
+      const nx = (q[1] - p[1]) / L, ny = -(q[0] - p[0]) / L;
+      s += `<text x="${mx + nx * LABEL_DIST}" y="${my + ny * LABEL_DIST + 4}" text-anchor="middle" font-size="11" fill="#555">«${r.kind}»</text>`;
+    }
   }
   for (const n of nodes.values()) {
     if (n.kind === 'uc') {
-      s += `<ellipse cx="${n.cx}" cy="${n.cy}" rx="${UC_W / 2}" ry="${UC_H / 2}" fill="${n.key.startsWith('INC') ? '#f3f4f6' : '#fffbe6'}" stroke="#333"/>`;
-      s += `<text x="${n.cx}" y="${n.cy - 3}" text-anchor="middle" font-size="12" font-weight="bold">${n.key}</text>`;
-      s += `<text x="${n.cx}" y="${n.cy + 12}" text-anchor="middle" font-size="12">${esc(n.name)}</text>`;
+      s += `<ellipse cx="${n.cx}" cy="${n.cy}" rx="${n.w / 2}" ry="${UC_H / 2}" fill="${n.key.startsWith('INC') ? '#f3f4f6' : '#fffbe6'}" stroke="#333"/>`;
+      s += `<text x="${n.cx}" y="${n.cy + 4}" text-anchor="middle" font-size="13" font-weight="bold">${n.key} ${esc(n.name)}</text>`;
     } else {
       const x = n.x + ACTOR_W / 2, y = n.y;
       s += `<g stroke="#333" fill="none"><circle cx="${x}" cy="${y + 12}" r="10"/><line x1="${x}" y1="${y + 22}" x2="${x}" y2="${y + 52}"/><line x1="${x - 16}" y1="${y + 32}" x2="${x + 16}" y2="${y + 32}"/><line x1="${x}" y1="${y + 52}" x2="${x - 13}" y2="${y + 72}"/><line x1="${x}" y1="${y + 52}" x2="${x + 13}" y2="${y + 72}"/></g>`;
       s += `<text x="${x}" y="${y + 90}" text-anchor="middle" font-size="13" font-weight="bold">${esc(n.name)}</text>`;
     }
   }
-  const W = 1360, H = 1110;
+  const W = 1680, H = 1370;
   return `<!doctype html><meta charset="utf-8"><body style="margin:0;background:#fff;font-family:Arial">
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="-30 0 ${W} ${H}" font-family="Arial">
 <defs><marker id="tri" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="14" markerHeight="14" orient="auto"><path d="M0 0L12 6L0 12z" fill="#fff" stroke="#444"/></marker>
@@ -171,13 +189,13 @@ const relId = r => id(`rel:${r.kind}:${r.from}:${r.to}`);
 
 const actorEls = ACTORS.map(a => ({ _type: 'UMLActor', _id: elId(a.key), _parent: R(M), name: a.name, documentation: a.doc, ownedElements: [] }));
 const ucEls = USE_CASES.map(u => ({
-  _type: 'UMLUseCase', _id: elId(u.key), _parent: R(M), name: `${u.key} ${u.name}`, documentation: DOCS[u.key], ownedElements: [],
-  extensionPoints: RELATIONS.filter(r => r.kind === 'extend' && r.to === u.key).map(r => r.point)
-    .filter((p, i, all) => all.indexOf(p) === i)
-    .map(p => ({ _type: 'UMLExtensionPoint', _id: id(`xp:${u.key}:${p}`), _parent: R(elId(u.key)), name: p })),
+  _type: 'UMLUseCase', _id: elId(u.key), _parent: R(M), name: `${u.key} ${u.name}`, ownedElements: [],
+  // Extension points are named in the documentation, not as UML extension
+  // points: StarUML draws those as a compartment that squashes the ellipse.
+  documentation: DOCS[u.key] + RELATIONS.filter(r => r.kind === 'extend' && r.to === u.key).map(r => r.point)
+    .filter((p, i, all) => all.indexOf(p) === i).map(p => ` Extension point: ${p}.`).join(''),
 }));
 const byKey = new Map([...ACTORS.map((a, i) => [a.key, actorEls[i]]), ...USE_CASES.map((u, i) => [u.key, ucEls[i]])]);
-for (const u of ucEls) if (!u.extensionPoints.length) delete u.extensionPoints;
 
 for (const r of RELATIONS) {
   const owner = byKey.get(r.from), rid = relId(r);
@@ -190,11 +208,6 @@ for (const r of RELATIONS) {
   } else {
     const type = { gen: 'UMLGeneralization', include: 'UMLInclude', extend: 'UMLExtend' }[r.kind];
     const rel = { _type: type, _id: rid, _parent: R(owner._id), source: R(elId(r.from)), target: R(elId(r.to)) };
-    if (r.kind === 'extend') {
-      const base = byKey.get(r.to);
-      const xp = base.extensionPoints.find(p => p.name === r.point);
-      rel.extensionLocations = [R(xp._id)];
-    }
     owner.ownedElements.push(rel);
   }
 }
@@ -289,7 +302,7 @@ function edgeView(r) {
   const type = { gen: 'UMLGeneralizationView', include: 'UMLIncludeView', extend: 'UMLExtendView' }[r.kind];
   const labels = {
     nameLabel: edgeLabel(vid, rid, 'name', 1, 1.5707963267948966, 15),
-    stereotypeLabel: edgeLabel(vid, rid, 'stereo', 1, 1.5707963267948966, 30, r.kind === 'gen' ? {} : { visible: true, text: `«${r.kind}»` }),
+    stereotypeLabel: edgeLabel(vid, rid, 'stereo', 1, 1.5707963267948966, LABEL_DIST, r.kind === 'gen' ? {} : { visible: true, text: `«${r.kind}»` }),
     propertyLabel: edgeLabel(vid, rid, 'prop', 1, -1.5707963267948966, 15),
   };
   const v = { _type: type, ...base, subViews: Object.values(labels) };

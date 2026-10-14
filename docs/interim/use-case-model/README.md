@@ -8,7 +8,17 @@ Use case model of the FBD Bank system, based on the revised proposal ([FBD_Inter
 | [`FBD_UseCases_model-only.mdj`](FBD_UseCases_model-only.mdj) | The same model without the diagram. Fallback if the full file does not open: create a use case diagram and drag the elements from the Model Explorer onto it. |
 | [`build-mdj.mjs`](build-mdj.mjs) | Generates both files: `node docs/interim/use-case-model/build-mdj.mjs` (add `--no-views` for the model-only file). Once the diagram has been edited in StarUML, the `.mdj` is the source and should not be regenerated. |
 
-**Status.** Draft for review. The `.mdj` was generated and checked for unique IDs and resolved references, but has not yet been opened in StarUML, so the first open may need layout adjustments (label positions in particular). Before it goes into the interim report, another team member reviews the model, and the diagram is exported from StarUML (*File → Export Diagram As → PNG/SVG*).
+**Status.** Draft for review. The `.mdj` is checked for unique IDs and resolved references. A first version was opened in StarUML; the second version, in this folder, fixes what that showed:
+- squashed use cases with extension point compartments;
+- lines stopping short of the ellipses;
+- «include»/«extend» labels drifting from their lines.
+
+Before it goes into the interim report, another team member reviews the model, and the diagram is exported from StarUML (*File → Export Diagram As → PNG/SVG*).
+
+**Layout notes for editing in StarUML.**
+- StarUML ends a line at a use case's bounding rectangle, not at the ellipse. A line that arrives at a shallow angle, roughly 5° to 20°, therefore stops a little short of the ellipse. Lines that arrive level or steeply touch it.
+- The Client's use cases are arranged on an arc around the Client to keep these gaps small.
+- The one remaining crossing, between UC-07/UC-08 and INC-01/INC-02, cannot be avoided: both use cases relate to both supporting use cases.
 
 ---
 
@@ -22,13 +32,13 @@ Use case model of the FBD Bank system, based on the revised proposal ([FBD_Inter
 
 | Actor | Use cases |
 |-------|-----------|
-| Visitor | UC-01, UC-10 (public page) |
+| Visitor | UC-01 only. A visitor sees no group or account information. |
 | Client | UC-02, UC-03, UC-04, UC-05, UC-07, UC-08, UC-09, UC-10, UC-11, UC-13 |
 | Group owner | UC-06 (and, as a Client, all of the above) |
 | Member | UC-06, to leave a group (and, as a Client, all of the above) |
 | Administrator | UC-12, UC-13 |
 
-**Include and extend relationships.** Three supporting use cases capture behaviour shared by several use cases. They have no functional requirement of their own, and are numbered INC-01 to INC-03 to keep them apart from the FR-mapped use cases.
+**Include and extend relationships.** Three supporting use cases capture behaviour shared by several use cases. They have no functional requirement of their own, and are numbered INC-01 to INC-03 to keep them apart from the FR-mapped use cases. Extension points are named in the table below, in the descriptions in section 2, and in each use case's documentation in StarUML. They are not drawn as UML extension point compartments, which StarUML renders by squashing the ellipse.
 
 | Relationship | Meaning |
 |--------------|---------|
@@ -56,7 +66,7 @@ Each functional requirement maps to exactly one use case of the same number and 
 
 ## 2. Use case descriptions
 
-Rules referred to as DR-xx are the domain requirements, and *Table II* is the table of building blocks, both in Section IV of the revised proposal. Unless stated otherwise, every use case except UC-01 and the public page of UC-10 requires a logged-in session (UC-02), and every change is recorded with the acting user and a timestamp.
+Rules referred to as DR-xx are the domain requirements, and *Table II* is the table of building blocks, both in Section IV of the revised proposal. Unless stated otherwise, every use case except UC-01 requires a logged-in session (UC-02), and every change is recorded with the acting user and a timestamp.
 
 ### UC-01 Register User
 
@@ -134,7 +144,7 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 1. The client chooses to set up a group.
 2. The system shows the templates Couple, Club, Church and Custom.
 3. The client selects a template.
-4. The system proposes a name, a visibility (Couple: *members*; Club: *public*; Church: *private*; Custom: *members*), and the template's settings:
+4. The system proposes a name, a visibility (Couple: *members*; Club: *members*; Church: *private*; Custom: *members*), and the template's settings:
    - **Couple:** a partner, and the share of every income that the client's router sends to the shared account (default 30 %).
    - **Club:** budgets with percentages (default Marketing 20 %, Materials 30 %, Joint exercises 50 %).
    - **Church, Custom:** no further settings.
@@ -196,7 +206,7 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 5. The invited user accepts (A7); the system makes the user a member with the chosen role and records the change.
 
 **Alternative flows**
-- **A1 Change visibility:** the owner selects *public*, *members* or *private*; the system applies it immediately (DR-07).
+- **A1 Change visibility:** the owner selects *members* or *private*; the system applies it immediately (DR-07).
 - **A2 Change role:** the owner changes a member between payer and contributor.
 - **A3 Remove member:** the owner removes a member. Past contributions remain in the history.
 - **A4 Add account:** the owner enters a name; the system creates a new OWT account in the group.
@@ -278,24 +288,22 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 
 | | |
 |---|---|
-| **Primary actor** | Client, Member; Visitor (public page) |
-| **Preconditions** | For an account: the actor owns the personal account or is a member of the group that holds it. For the public page: the group's visibility is *public*. |
+| **Primary actor** | Client, Member |
+| **Preconditions** | The actor owns the personal account, or is an active member of the group that holds it. |
 | **Postconditions** | None; nothing changes. |
 
 **Main flow**
 1. The actor opens a personal account or a group.
 2. The system lists its transactions, newest first. Each entry shows the date, the amount, the counterparty and the acting user. A transfer caused by a router shows the amount that caused it.
 3. The actor filters by period, type (all, money in, payments) or counterparty.
-4. For a group, the system shows the contributions per member as a graph and a table, and applies the group's visibility (**include INC-03**) to both and to the transaction list.
+4. For a group, the system shows the contributions per member as a graph and a table ranked by total (equal totals: earliest contribution first), and applies the group's visibility (**include INC-03**) to both and to the transaction list.
 5. **Extension point *Transaction selected*:** the actor selects a transaction (UC-11 may extend here).
 
 **Alternative flows**
 - **A1 One account of a group:** the actor selects one of the group's accounts; the list shows only that account's transactions, including the splits it received from the group number.
-- **A2 Public page:** a visitor opens a group's public link. The system shows the group's name and number, the total received, and the five largest contributors with their totals. Ties are ordered by the earliest contribution.
 
 **Exception flows**
-- **E1 No access** (precondition): the system shows that the page does not exist or is not accessible, without revealing whether the account or group exists.
-- **E2 Not public** (A2): the system shows that the group's contributions are not public.
+- **E1 No access** (precondition): the actor is not the owner or an active member, for example a user whose invitation is still pending. The system shows that the page does not exist or is not accessible, without revealing whether the account or group exists.
 
 ### UC-11 Flag Unauthorised Transaction
 
@@ -386,7 +394,7 @@ Extends UC-07 and UC-08 at *Destination is a router*. Applies DR-05:
 
 Included by UC-10. Applies DR-07 for the viewing user:
 
-- **Public** or **members:** all members' contributions are shown with names.
+- **Members:** all members' contributions are shown with names.
 - **Private,** for the owner and payers: all contributions with names.
 - **Private,** for contributors: their own contributions with their name, and the group's total. Other members' contributions are shown without a name, as "a member", with amount and date, and in the contributions graph and table only as one total for all other members.
 - Balances and payments are shown to all members in every case.
@@ -402,4 +410,5 @@ The following questions from the first draft were decided by the team on October
 | Must an invited user accept before joining a group? | Yes. Invitations are pending until accepted; the invitation shows the group's visibility. | UC-04, UC-06 (A7, A8), NFR-09, Membership entity (state) |
 | In a private group, do contributors see other members' gifts? | Yes, with amount and date but without a name, as "a member". | DR-07, INC-03 |
 | Idle session limit | 30 minutes without a request. | UC-02 (A2) |
-| Order of tied contributors on the public page | Earliest contribution first. | UC-10 (A2), DR-07 |
+| Order of tied contributors in the contributions ranking | Earliest contribution first. | UC-10, DR-07 |
+| Who can see a group's details? | Only active members. Visitors can only register; there is no public page, and the *public* visibility level is removed (levels: *members*, *private*). | UC-01, UC-10, DR-07, Club template |
