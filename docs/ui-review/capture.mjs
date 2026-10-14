@@ -43,19 +43,24 @@ const SCREENS = [
   ['02-signup', null, '/signup'],
   ['03-home', 'minji', '/home'],
   ['04-spending-account', 'minji', '/account/sp-minji'],
-  ['05-savings-account', 'minji', '/account/sv-minji'],
-  ['06-owt-account', 'minji', '/account/home'],
-  ['07-owt-contributor-view', 'jiho', '/account/club'],
-  ['08-sharing-owt', 'minji', '/account/home/share'],
-  ['09-sharing-as-manager', 'minji', '/account/sv-joon/share'],
-  ['10-new-account', 'minji', '/new'],
-  ['11-transfer', 'minji', '/transfer?to=sv-minji'],
-  ['12-transfer-blocked', 'minji', '/transfer?from=sv-minji&to=home'],
-  ['13-pay', 'minji', '/pay'],
-  ['14-pay-blocked', 'minji', '/pay?from=club'],
-  ['15-deposit', 'minji', '/deposit'],
-  ['16-router', 'minji', '/router'],
-  ['17-not-found', 'minji', '/account/does-not-exist'],
+  ['05-router', 'minji', '/router'],
+  ['06-group-couple', 'minji', '/group/g-home'],
+  ['07-group-club-owner', 'hana', '/group/g-club'],
+  ['08-group-club-member', 'jiho', '/group/g-club'],
+  ['09-club-subaccount', 'hana', '/group/g-club?acct=club-trips'],
+  ['10-group-church-private', 'minji', '/group/g-church'],
+  ['11-group-settings', 'hana', '/group/g-club/settings'],
+  ['12-group-number', 'hana', '/group/g-club/router'],
+  ['13-setup-couple', 'minji', '/setup'],
+  ['14-setup-club', 'minji', '/setup?template=club'],
+  ['15-public-page', null, '/public/g-club'],
+  ['16-new-account', 'minji', '/new'],
+  ['17-transfer-to-club', 'jiho', '/transfer?to=rt-club'],
+  ['18-transfer-blocked', 'minji', '/transfer?from=sv-minji&to=church'],
+  ['19-pay-from-group', 'hana', '/pay?from=club-trips'],
+  ['20-pay-blocked', 'jiho', '/pay?from=club-mkt'],
+  ['21-deposit', 'minji', '/deposit'],
+  ['22-not-found', 'minji', '/group/does-not-exist'],
 ];
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -139,6 +144,8 @@ async function main() {
         render();
         document.fonts.ready.then(() => true)`);
       await sleep(400); // let the hashchange render and layout settle
+      const thrown = events.filter(e => e.method === 'Runtime.exceptionThrown');
+      if (thrown.length) throw new Error(`${name} (${vp}) threw: ${thrown[0].params.exceptionDetails.exception?.description || thrown[0].params.exceptionDetails.text}`);
       // Grow the viewport to the page height before capturing, so elements
       // fixed to the bottom of the screen (the phone tab bar) end up at the
       // bottom of the image instead of across the middle. The height is

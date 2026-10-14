@@ -1,14 +1,16 @@
 # UI Review of the Demo (WBS 2.6, Key UI Screens)
 
-Review of the clickable prototype in [`/demo`](../../demo) against the submitted proposal ([FBD_Proposal.md](../proposal/FBD_Proposal.md)), carried out on October 14, 2026, for the interim report. It answers two questions: which screens the interim report still needs, and whether the screens that exist look and behave correctly.
+Review of the clickable prototype in [`/demo`](../../demo) against the revised proposal for the interim report ([FBD_Interim.md](../interim/FBD_Interim.md)), October 14, 2026.
 
-**Summary.** The demo is polished and works well on desktop and phone widths, but it prototypes a different product from the one in the proposal. It is built around account *types* (spending, savings, one-way transfer) and a deposit *router*, with two fixed roles (manager, contributor). The proposal is built around *permission scopes* (a)–(d) per account, dispute flags, and administrator investigation under consent. Five of the eleven use cases have no screen at all, and three existing screens contradict the functional requirements.
+**Summary.** The demo now follows the revised design: personal accounts, groups with one-way transfer (OWT) accounts and subaccounts, personal and group routers, templates (Couple, Club, Church, Custom) and contribution visibility (public, members, private), including a public contributor page. Seven of the thirteen use cases are covered fully and two partly. Login with lockout, dispute flags, administrator investigation and consent (UC-02, UC-11 to UC-13) are still missing.
+
+An earlier version of this review covered the first demo, which used manager and contributor roles on individual accounts. That version is in the git history; its visual findings were fixed in this update (see section 4).
 
 ---
 
 ## 1. How the screenshots were made
 
-All screenshots are in [`screenshots/`](screenshots). They can be regenerated with:
+Screenshots are written to [`screenshots/`](screenshots), which is git-ignored, so regenerate them before use:
 
 ```bash
 node docs/ui-review/capture.mjs
@@ -19,106 +21,99 @@ The script is [`capture.mjs`](capture.mjs) (Node 22+ and Google Chrome, no npm p
 1. Starts one headless Chrome with a throwaway profile in the OS temp folder. It never uses or touches your normal Chrome profile.
 2. Opens `demo/index.html` once and keeps the data the demo seeds on load. Before each screen the seed is restored, so every image shows the same data. The `demo/` folder is not copied or modified.
 3. For each screen and each viewport (desktop 1280×800, phone 390×844): logs in as the listed user by setting the demo's `state.me`, sets the route, waits for fonts, measures the page height at the real viewport size, then grows the viewport to that height and captures it.
-4. Closes Chrome and deletes the temporary profile, also on error. A 2-minute timeout aborts the run if anything hangs.
+4. Stops with an error if the page throws a JavaScript error on any screen.
+5. Closes Chrome and deletes the temporary profile, also on error. A 2-minute timeout aborts the run if anything hangs.
 
-Notes for checking the images:
-
-- Account numbers are random and dates are relative to the day of capture, so these differ between runs. Balances and names do not.
-- Pages are captured at full height. On phone width the tab bar, which is fixed to the bottom of the screen, therefore appears at the bottom of the whole page, as it would after scrolling to the end.
-- A first attempt (a shell script calling Chrome once per screenshot with a 2600 px tall window) was discarded: Chrome did not exit after each screenshot, so the script hung, and the tall window stretched the landing page, whose height is relative to the window (`min-height: calc(100vh - 180px)`).
+Account numbers are random and dates are relative to the day of capture, so these differ between runs; balances and names do not. On phone width the tab bar, which is fixed to the bottom of the screen, appears at the bottom of the whole page.
 
 ### Screens captured
 
-| # | Screen | Viewed as | Desktop | Phone |
-|---|--------|-----------|---------|-------|
-| 01 | Landing / log in | logged out | [png](screenshots/01-login-desktop.png) | [png](screenshots/01-login-mobile.png) |
-| 02 | Create a user | logged out | [png](screenshots/02-signup-desktop.png) | [png](screenshots/02-signup-mobile.png) |
-| 03 | Accounts overview | Minji | [png](screenshots/03-home-desktop.png) | [png](screenshots/03-home-mobile.png) |
-| 04 | Spending account | Minji | [png](screenshots/04-spending-account-desktop.png) | [png](screenshots/04-spending-account-mobile.png) |
-| 05 | Savings account | Minji | [png](screenshots/05-savings-account-desktop.png) | [png](screenshots/05-savings-account-mobile.png) |
-| 06 | OWT account, owner | Minji | [png](screenshots/06-owt-account-desktop.png) | [png](screenshots/06-owt-account-mobile.png) |
-| 07 | OWT account, contributor without pay rights | Ji-ho | [png](screenshots/07-owt-contributor-view-desktop.png) | [png](screenshots/07-owt-contributor-view-mobile.png) |
-| 08 | Contributors of an OWT account | Minji | [png](screenshots/08-sharing-owt-desktop.png) | [png](screenshots/08-sharing-owt-mobile.png) |
-| 09 | Sharing, viewed by a manager | Minji | [png](screenshots/09-sharing-as-manager-desktop.png) | [png](screenshots/09-sharing-as-manager-mobile.png) |
-| 10 | Open an account | Minji | [png](screenshots/10-new-account-desktop.png) | [png](screenshots/10-new-account-mobile.png) |
-| 11 | Transfer, allowed | Minji | [png](screenshots/11-transfer-desktop.png) | [png](screenshots/11-transfer-mobile.png) |
-| 12 | Transfer, blocked (savings → OWT) | Minji | [png](screenshots/12-transfer-blocked-desktop.png) | [png](screenshots/12-transfer-blocked-mobile.png) |
-| 13 | Pay | Minji | [png](screenshots/13-pay-desktop.png) | [png](screenshots/13-pay-mobile.png) |
-| 14 | Pay, blocked (contributor without pay rights) | Minji | [png](screenshots/14-pay-blocked-desktop.png) | [png](screenshots/14-pay-blocked-mobile.png) |
-| 15 | Deposit | Minji | [png](screenshots/15-deposit-desktop.png) | [png](screenshots/15-deposit-mobile.png) |
-| 16 | Router | Minji | [png](screenshots/16-router-desktop.png) | [png](screenshots/16-router-mobile.png) |
-| 17 | Not found / no access | Minji | [png](screenshots/17-not-found-desktop.png) | [png](screenshots/17-not-found-mobile.png) |
+Each screen is saved as `<name>-desktop.png` and `<name>-mobile.png`.
+
+| Name | Screen | Viewed as | Use cases |
+|------|--------|-----------|-----------|
+| 01-login | Landing with example users and a link to the public club page | logged out | UC-02 (placeholder) |
+| 02-signup | Create a user | logged out | UC-01 |
+| 03-home | Personal accounts, router summary, groups | Minji | UC-03, UC-05 |
+| 04-spending-account | Spending account with activity filters and the router rules that feed it | Minji | UC-03, UC-10 |
+| 05-router | Personal router: rules, preview, recent income and its splits | Minji | UC-05, UC-08 |
+| 06-group-couple | "Our home" (Couple, visibility *members*) | Minji | UC-10 |
+| 07-group-club-owner | Seoul Trail Club with three subaccounts, as treasurer | Hana | UC-10 |
+| 08-group-club-member | The same club as a contributor; Pay is locked with the reason shown | Ji-ho | UC-09, UC-10 |
+| 09-club-subaccount | Club page filtered to the Joint exercises account | Hana | UC-10 |
+| 10-group-church-private | Grace Church (visibility *private*) as a member: other members are hidden | Minji | UC-10, DR-07 |
+| 11-group-settings | Visibility, members and roles, accounts, group number | Hana | UC-06 |
+| 12-group-number | Group router (club number) split rules | Hana | UC-05 |
+| 13-setup-couple | Set up a group, Couple template | Minji | UC-04 |
+| 14-setup-club | Set up a group, Club template with budgets | Minji | UC-04 |
+| 15-public-page | Public page with the largest contributors | logged out | UC-10 |
+| 16-new-account | Open a personal account, with a link to group setup | Minji | UC-03 |
+| 17-transfer-to-club | Transfer to the club number | Ji-ho | UC-07 |
+| 18-transfer-blocked | Savings to a group is blocked | Minji | UC-07 |
+| 19-pay-from-group | Treasurer pays from a subaccount | Hana | UC-09 |
+| 20-pay-blocked | Contributor without pay rights | Ji-ho | UC-09 |
+| 21-deposit | Deposit to the router with a split preview | Minji | UC-08 |
+| 22-not-found | Unknown group or no access | Minji | — |
 
 ---
 
 ## 2. Coverage of the use cases
 
-| Use case | Screen in demo | Status |
-|----------|----------------|--------|
-| UC-01 Register User | 02 Create a user | ✅ Covered. Name, unique e-mail and password policy are checked. |
-| UC-02 Log In and Log Out | 01 Landing | ❌ **Missing.** There is no e-mail/password form, only a picker of example users. No failed-attempt message, no 24-hour lockout screen. Log out exists in the user menu. |
-| UC-03 Manage Accounts | 03 Overview, 10 Open an account | ⚠️ Partial. Opening and listing work. No way to rename (nickname) or close an account. |
-| UC-04 Transfer Funds | 11, 12 Transfer | ⚠️ Conflicts with the FR, see 3.1. |
-| UC-05 Deposit Funds | 15 Deposit | ⚠️ Mostly covered, but managers can also deposit (UC-05: owner only), and the router is outside the proposal. |
-| UC-06 Make Payment or Withdrawal | 13, 14 Pay | ⚠️ Conflicts with the FR, see 3.2. No withdrawal option. |
-| UC-07 Manage Permissions | 08, 09 Sharing | ⚠️ Conflicts with the FR, see 3.3. |
-| UC-08 View Transaction History | Activity list on 04–07 | ⚠️ Partial. Each entry shows who acted, as required. No filters by period, type or counterparty, and only the latest 30 entries are shown, with no way to see older ones. |
-| UC-09 Flag Unauthorised Transaction | – | ❌ **Missing.** Transactions cannot be selected or flagged. |
-| UC-10 Investigate Transactions | – | ❌ **Missing.** There is no administrator role or screen. |
-| UC-11 Manage Data-Access Consent | – | ❌ **Missing.** No consent request or approval screen. |
+| Use case | Status |
+|----------|--------|
+| UC-01 Register User | ✅ Name, unique e-mail and password policy are checked. |
+| UC-02 Log In and Log Out | ❌ The landing page lets you pick an example user. There is no e-mail and password form, failed-attempt message or 24-hour lockout. Log out is in the user menu. |
+| UC-03 Manage Personal Accounts | ⚠️ Opening and listing work. Personal accounts cannot yet be renamed or closed. |
+| UC-04 Set Up Group from Template | ✅ Four templates. Couple invites the partner as payer and adds a rule to your router (creating the router if needed). Club creates one account per budget and a club number whose rules must add up to 100 %. Each template proposes a visibility, which can be changed before creating. |
+| UC-05 Manage Router | ✅ Personal router and group number: ordered percentage or fixed rules, remainder account, live preview, and a list of recent income with the transfers it caused. Only the group owner can edit a group number. |
+| UC-06 Manage Group | ✅ Owner sets visibility, changes roles (payer or contributor), removes and invites members, adds accounts and closes empty ones, and creates a group number. Members can leave. Permission changes are not yet shown in a log. |
+| UC-07 Transfer Funds | ✅ To your own accounts, your groups, your router, a group number, or any spending account by its number. Savings → group is blocked. Amounts sent to a router or group number show their split before sending. |
+| UC-08 Deposit Funds | ✅ To your own spending account or router, with the per-deposit limit. Deposits to savings and group accounts are blocked. |
+| UC-09 Make Payment or Withdrawal | ✅ From your own spending accounts, or from a group account if you are its owner or a payer. Group accounts cannot be paid below zero. There is no separate withdrawal button. |
+| UC-10 View History and Contributions | ⚠️ Every entry shows who acted; contributions are named after the member. Filters for *all*, *money in* and *payments*, and a "show all" button. Contributions graph and table respect visibility; the public page lists the top five contributors. Filters by period and counterparty are still missing from the activity list. |
+| UC-11 Flag Unauthorised Transaction | ❌ Missing. |
+| UC-12 Investigate Transactions | ❌ Missing; there is no administrator role. |
+| UC-13 Manage Data-Access Consent | ❌ Missing. |
 
 ---
 
-## 3. Conflicts with the functional requirements
+## 3. Consistency with the domain requirements
 
-### 3.1 Transfers only reach accounts the user already has access to
-
-UC-04 says the destination is "another account in the system, identified by its account number". In the demo, the *To* list only offers accounts the user owns or shares ([app.js:897](../../demo/app.js#L897)), and the rules card says "You also need access to both accounts". There is no way to type an account number, so the central example of the proposal — an officer paying a supplier's account — cannot be shown.
-
-The demo's account-type rules (savings cannot send to OWT, nothing can leave an OWT account by transfer, see screen 12) are also not part of any functional requirement.
-
-### 3.2 Delegates can pay
-
-The revised UC-06 makes payments and withdrawals owner-only. In the demo, managers can pay from spending accounts, and OWT contributors with *Can pay* can pay from the OWT account ([app.js:245-261](../../demo/app.js#L245-L261), screens 13 and 14).
-
-### 3.3 Two fixed roles instead of permission scopes
-
-UC-07 defines four scopes that are granted per account and per user: (a) view, (b) transfer to selected accounts, (c) transfer to any account, (d) manage permissions. The demo has two roles instead:
-
-- **Manager** (spending and savings): "the same rights as the owner", including inviting other managers (screen 09).
-- **Contributor** (OWT): can send money in and see everything, with an optional *Can pay* switch (screen 08).
-
-A manager is exactly the all-or-nothing role that problem P1 in the proposal criticises. There is no way to grant view-only access, or a transfer right restricted to selected accounts, and permission changes are not shown in any log.
+| Rule | In the demo |
+|------|-------------|
+| DR-01 Personal accounts may go negative | ✅ Payments and transfers from personal accounts are not limited. |
+| DR-02 Atomic transfers, balances reconcile | ✅ Balances are always computed from the ledger. |
+| DR-03 Whole won | ✅ Amounts are integers; percentage splits round down. |
+| DR-04 Closed accounts | ⚠️ Closed group accounts disappear from lists and targets. Personal accounts cannot be closed yet. |
+| DR-05 Router splitting | ✅ Rules in order, each capped by what is left, remainder last. Split transfers record the member who paid as actor, so dues paid to the club number are credited to that member. |
+| DR-06 OWT accounts | ✅ Filled only by transfers from members' spending accounts or routers; leave only as payments by the owner or payers; never below zero. |
+| DR-07 Visibility | ✅ In a private group, a contributor sees "You vs. others", an "Other members" row, and "A member" in the activity list. |
 
 ---
 
 ## 4. Visual and usability findings
 
-The overall visual quality is good: consistent spacing, type and colour, clear blocked/allowed messages on forms, a usable phone layout with a bottom tab bar, and every transaction shows who performed it. The issues below are in order of importance.
+Fixed in this update (from the review of the first demo):
 
-1. **Reasons for disabled buttons are only in a tooltip.** A locked action such as *Pay* on screen 07 explains why only through the `title` attribute ([app.js:537-541](../../demo/app.js#L537-L541)), which is invisible on phones and to keyboard users. Show the reason as text, or link to the form where the full message appears.
-2. **Broken layout in the Pay rules card.** "OWT — owner, and contributors with *Can pay*" is split into two columns, because the list item is a flex container and the `<em>` becomes a separate flex item ([app.js:968](../../demo/app.js#L968), [styles.css:385](../../demo/styles.css#L385)). Clearly visible on the phone (screen 14). Wrapping the text in a `<span>` fixes it.
-3. **Transfers into a shared account show the sender's private account name.** On screen 07 each contribution is titled "Everyday · Hana", the name of Hana's own spending account, followed by "by Hana". The contributor name alone is clearer and does not expose the name of another user's private account ([app.js:349-350](../../demo/app.js#L349-L350)).
-4. **"Total in accounts you own" leaves out owned OWT accounts.** Minji owns *Our home* (₩650,000), but it is not included in the total on screen 03 ([app.js:468-471](../../demo/app.js#L468-L471)). Either include it or relabel the total.
-5. **Long activity lists without paging or filters.** The OWT pages (06, 07) end in 30 near-identical rows. Filters by period and type (required by UC-08) and a "show more" button would shorten the page considerably.
-6. **Router preview labels wrap awkwardly.** "Fixed ₩200,000 rule" breaks over two lines in the narrow preview column (screen 16). Minor.
-7. **Every contributor sees every other contributor's amounts.** On screen 07, Ji-ho sees exactly how much each club member has paid. This is a design decision rather than a bug, but it should be stated in the requirements, given the privacy emphasis of the proposal (P4, NFR-09).
+- The reason a button is disabled is now shown as text under the buttons, not only in a tooltip (screens 08, 10).
+- The Pay rules card no longer splits into columns (screen 20). The same flex-item bug in the group note was fixed too.
+- Contributions are titled with the member's name instead of their private account name (screens 06–10).
+- The home total is labelled "Total in your personal accounts"; group balances are shown on the group cards.
+- The activity list has filters and a "Show all" button instead of stopping silently at 30 entries.
+- Long router labels no longer wrap in the split preview.
+
+Still open:
+
+1. **Private groups still show each gift's amount and date** as "A member" (screen 10). In a small group, a member could work out who gave what from the amounts. Consider showing only the member's own transactions and the total in a private group.
+2. **The group page is long on phones** (screen 08 mobile, about five screens). The graph, the table and the activity list repeat much of the same information. Consider collapsing the contributions table, or moving activity to its own tab.
+3. **Invitations are accepted immediately.** A user added to a group, or invited as a partner by the Couple template, becomes a member without agreeing. The requirement NFR-09 says users are told a group's visibility *before* they join, which needs an accept step.
+4. **The public page shows ties in input order** (screen 15: four members with ₩90,000). A stable rule, for example earliest contributor first, should be specified.
+5. **No permission change log** (UC-06), and no withdrawal shortcut (UC-09).
 
 ---
 
 ## 5. Recommendations for the interim report
 
-The interim report needs key screens that match the requirements being baselined. Suggested order:
-
-1. **Decide which design the report follows.** Either align the demo with the proposal (scopes, flags, administrator, consent), or update the proposal's requirements to the account-type and router model. Mixing both in one report will make the requirements traceability matrix (G3) inconsistent. The remaining steps assume the proposal is kept.
-2. **Add the missing screens**, which can be static where interaction is not needed:
-   - Log in with e-mail and password, a wrong-password message, and the lockout message (UC-02).
-   - Flag a transaction from the activity list, and a flag status page (UC-09).
-   - Administrator: transaction search with masked personal details, and the list of open flags (UC-10).
-   - Consent request as the client sees it, with approve and deny buttons and the 72-hour expiry (UC-11).
-   - Account settings with rename and close (UC-03).
-3. **Rework the sharing screen into a permission editor** with the four scopes (a)–(d) and, for scope (b), a list of allowed destination account numbers (UC-07). Add a change log for permissions.
-4. **Allow transfers by account number** on the Transfer screen, checked against the delegate's scope (UC-04). Restrict Pay and Deposit to owners (UC-05, UC-06).
-5. **Add filters to the activity list** (UC-08).
-6. **Fix findings 1–4 in section 4.** They are small changes.
-7. Re-run `node docs/ui-review/capture.mjs` and use the images in the interim report.
+1. Use screens 03, 06, 07, 10, 13–15 and 17 as the key UI screens; together they show all three building blocks, a template, and the three visibility levels.
+2. Add static mock-ups for the missing use cases: login with lockout (UC-02), flagging a transaction and following its status (UC-11), the administrator's search with masked details (UC-12), and the consent request (UC-13).
+3. Decide findings 1 and 3 in section 4 before baselining DR-07 and NFR-09, since they change the requirements, not only the screens.
