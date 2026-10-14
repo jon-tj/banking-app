@@ -20,7 +20,7 @@ Project repository: https://github.com/jon-tj/banking-app
 
 </div>
 
-> Markdown conversion of the proposal submitted on September 30, 2026 (original: `FBD_Proposal.pdf`). The layout has been adapted to Markdown. The text has since been revised to make the rules on who can pay whom consistent with the functional requirements (Sections I, III-A, III-B, IV-B and Tables I and III); the submitted PDF remains the record of the original text.
+> Markdown conversion of the proposal submitted on September 30, 2026 (original: `FBD_Proposal.pdf`). The layout has been adapted to Markdown. The text has since been revised to make the rules on who can pay whom consistent with the functional requirements (Sections I, III-A, III-B, IV-B and Tables I and III) and to replace the scheduled system clock with timestamp checks at the time of each request (Table II, UC-02 and UC-11); the submitted PDF remains the record of the original text.
 
 ---
 
@@ -103,13 +103,12 @@ In accordance with the course convention, the name of each use case will also be
 | Client | A registered user who owns one or more accounts. |
 | Delegate | A client acting on an account owned by another client, within the scope of granted permissions. |
 | Administrator | A bank staff member who investigates transactions and handles dispute flags. |
-| System clock | A time-based trigger that lifts login blocks and expires consents. |
 
 ### B. Use Cases
 
 **UC-01 Register User.** A visitor creates a user by providing a full name, an e-mail address and a password. The e-mail address must be unique, and the password must satisfy a minimum policy (at least eight characters, including letters and digits). Passwords are stored only as salted hashes.
 
-**UC-02 Log In and Log Out.** A client authenticates with e-mail and password, and a session is established. Every attempt is recorded. After five consecutive failed attempts, the system alerts the user and blocks further login attempts for 24 hours. Logging out ends the session, and idle sessions expire automatically.
+**UC-02 Log In and Log Out.** A client authenticates with e-mail and password, and a session is established. Every attempt is recorded. After five consecutive failed attempts, the system alerts the user and blocks further login attempts for 24 hours by setting a `blocked_until` timestamp. On each attempt, the system compares the current time with `blocked_until`; no scheduled job is used to lift the block. Logging out ends the session, and idle sessions expire automatically.
 
 **UC-03 Manage Accounts.** A client opens one or more accounts linked to the user; each receives a unique account number and starts with a zero balance. The client can view the list of accounts with balances, assign a nickname, and close an account whose balance is zero and which has no open dispute flag.
 
@@ -127,7 +126,7 @@ In accordance with the course convention, the name of each use case will also be
 
 **UC-10 Investigate Transactions.** An administrator searches transactions by time range or by user and reviews open flags, updating their status with a note. Personal details of clients are masked by default on investigation screens.
 
-**UC-11 Manage Data-Access Consent.** To see a client’s personal details, an administrator must request consent for a specific flag. The client grants or denies the request; a granted consent is time-limited (72 hours) and revocable. Every access to personal details is logged.
+**UC-11 Manage Data-Access Consent.** To see a client’s personal details, an administrator must request consent for a specific flag. The client grants or denies the request; a granted consent is time-limited (72 hours) and revocable. Expiry is determined by comparing the current time with the consent’s `expires_at` timestamp whenever personal details are requested; no scheduled job is used. Every access to personal details is logged.
 
 **Table III. Summary of Use Cases**
 
