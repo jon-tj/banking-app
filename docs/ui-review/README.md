@@ -65,8 +65,8 @@ Each screen is saved as `<name>-desktop.png` and `<name>-mobile.png`.
 | UC-02 Log In and Log Out | ❌ The landing page lets you pick an example user. There is no e-mail and password form, failed-attempt message or 24-hour lockout. Log out is in the user menu. |
 | UC-03 Manage Personal Accounts | ⚠️ Opening and listing work. Personal accounts cannot yet be renamed or closed. |
 | UC-04 Set Up Group from Template | ✅ Four templates. Couple invites the partner as payer and adds a rule to your router (creating the router if needed). Club creates one account per budget and a club number whose rules must add up to 100 %. Each template proposes a visibility, which can be changed before creating. |
-| UC-05 Manage Router | ✅ Personal router and group number: ordered percentage or fixed rules, remainder account, live preview, and a list of recent income with the transfers it caused. Only the group owner can edit a group number. |
-| UC-06 Manage Group | ✅ Owner sets visibility, changes roles (payer or contributor), invites members and withdraws invitations, removes members, adds accounts and closes empty ones, and creates a group number. Invited users join only by accepting, and can decline. Members can leave. Permission changes are not yet shown in a log. |
+| UC-05 Manage Router | ✅ Personal router and group number: ordered percentage or fixed rules, remainder account, live preview, and a list of recent income with the transfers it caused. Only the group owner can edit a group number. A personal router's remainder is always one of your own accounts, and inactive rules are marked. |
+| UC-06 Manage Group | ✅ Owner sets visibility, changes roles (payer or contributor), invites members and withdraws invitations, removes members, adds and renames accounts and closes empty ones, and creates a group number. Invited users join only by accepting, and can decline. Members can leave. Permission changes are not yet shown in a log. |
 | UC-07 Transfer Funds | ✅ To your own accounts, your groups, your router, a group number, or any spending account by its number. Savings → group is blocked. Amounts sent to a router or group number show their split before sending. |
 | UC-08 Deposit Funds | ✅ To your own spending account or router, with the per-deposit limit. Deposits to savings and group accounts are blocked. |
 | UC-09 Make Payment or Withdrawal | ✅ From your own spending accounts, or from a group account if you are its owner or a payer. Group accounts cannot be paid below zero. There is no separate withdrawal button. |
@@ -85,7 +85,7 @@ Each screen is saved as `<name>-desktop.png` and `<name>-mobile.png`.
 | DR-02 Atomic transfers, balances reconcile | ✅ Balances are always computed from the ledger. |
 | DR-03 Whole won | ✅ Amounts are integers; percentage splits round down. |
 | DR-04 Closed accounts | ⚠️ Closed group accounts disappear from lists and targets. Personal accounts cannot be closed yet. |
-| DR-05 Router splitting | ✅ Rules in order, each capped by what is left, remainder last. Split transfers record the member who paid as actor, so dues paid to the club number are credited to that member. |
+| DR-05 Router splitting | ✅ Rules in order, each capped by what is left, remainder last. Split transfers record the member who paid as actor, so dues paid to the club number are credited to that member. Rules whose target is closed, or belongs to a group the owner has left, are marked inactive and take nothing. |
 | DR-06 OWT accounts | ✅ Filled only by transfers from members' spending accounts or routers; leave only as payments by the owner or payers; never below zero. |
 | DR-07 Visibility | ✅ In a private group, a contributor sees "You vs. others", an "Other members" row, and "A member" in the activity list. |
 

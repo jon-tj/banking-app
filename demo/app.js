@@ -55,6 +55,7 @@ const ICONS = {
   x: '<path d="M6 6l12 12M18 6 6 18"/>',
   lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
   copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',
+  pen: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   out: '<path d="M15 4h4v16h-4"/><path d="M10 17l-5-5 5-5M5 12h11"/>',
   reset: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
@@ -120,14 +121,24 @@ function addTx(s, t) {
   return rec;
 }
 
+// A rule is inactive while its target is closed, or is an account of a group in
+// which the router's owner is not an active member (DR-05). It takes nothing.
+function ruleActive(s, rt, rule) {
+  const a = s.accounts.find(x => x.id === rule.to);
+  if (!a || a.closed) return false;
+  if (!rt.owner || !a.group) return true;
+  const g = s.groups.find(x => x.id === a.group);
+  return !!g && (g.owner === rt.owner || g.members.some(m => m.user === rt.owner && (m.state || 'active') === 'active'));
+}
+
 // Splits an amount arriving at a router (DR-05). Percentages are of the
 // received amount, rounded down; every rule is capped by what is left; the
 // remainder goes to `rest`.
-function splitPlan(rt, amount) {
+function splitPlan(rt, amount, s = state) {
   let left = amount;
   const out = [];
   for (const rule of rt.rules) {
-    if (!rule.to) continue;
+    if (!rule.to || !ruleActive(s, rt, rule)) continue;
     let a = rule.mode === 'pct' ? Math.floor(amount * rule.value / 100) : rule.value;
     a = Math.min(a, left);
     if (a <= 0) continue;
@@ -142,7 +153,7 @@ function splitPlan(rt, amount) {
 // the incoming amount, so a split through a group router is credited to the
 // member who paid.
 function routeIn(s, rt, incoming) {
-  splitPlan(rt, incoming.amount).forEach((p, i) => addTx(s, {
+  splitPlan(rt, incoming.amount, s).forEach((p, i) => addTx(s, {
     type: 'transfer', from: rt.id, to: p.to, amount: p.amount,
     actor: incoming.actor, via: incoming.id, memo: p.why, ts: incoming.ts + i + 1,
   }));
@@ -988,7 +999,8 @@ function settingsPage(gid) {
   const roleSelect = m => `<select class="mini-select" data-role="${m.user}" aria-label="Role of ${esc(user(m.user).name)}">
       <option value="payer" ${m.role === 'payer' ? 'selected' : ''}>Payer</option>
       <option value="contributor" ${m.role === 'contributor' ? 'selected' : ''}>Contributor</option></select>`;
-  const usedByRouter = id => state.routers.some(r => r.rest === id || r.rules.some(x => x.to === id));
+  // Only the group's own number keeps an account open; members' rules for it become inactive (DR-05).
+  const usedByRouter = id => !!rt && (rt.rest === id || rt.rules.some(x => x.to === id));
   return {
     html: `
       <div class="narrow wide">
@@ -1023,7 +1035,8 @@ function settingsPage(gid) {
           <div class="side-head"><h3>Accounts</h3><span class="muted small">Each account is a budget. Payments are made from a specific account.</span></div>
           <ul class="ppl big">${accts.map(a => `<li><span class="type-ic">${icon('funnel')}</span><span class="grow"><strong>${esc(a.name)}</strong><span class="muted small">${a.no}${rt ? ' · ' + (ruleText(rt, a.id) || 'no rule') : ''}</span></span>
             <strong class="num">${won(balance(a.id))}</strong>
-            ${owner && accts.length > 1 ? `<button class="icon-btn" data-close="${a.id}" title="${balance(a.id) ? 'Only empty accounts can be closed' : usedByRouter(a.id) ? 'Remove router rules for this account first' : 'Close account'}" ${balance(a.id) || usedByRouter(a.id) ? 'disabled' : ''}>${icon('trash')}</button>` : ''}</li>`).join('')}</ul>
+            ${owner ? `<button class="icon-btn" data-rename="${a.id}" title="Rename">${icon('pen')}</button>` : ''}
+            ${owner && accts.length > 1 ? `<button class="icon-btn" data-close="${a.id}" title="${balance(a.id) ? 'Only empty accounts can be closed' : usedByRouter(a.id) ? 'Change the group number’s rules for this account first' : 'Close account'}" ${balance(a.id) || usedByRouter(a.id) ? 'disabled' : ''}>${icon('trash')}</button>` : ''}</li>`).join('')}</ul>
           ${owner ? `<form class="row" id="addAcct"><label class="field grow"><span>New account</span><input name="name" placeholder="e.g. Snacks" autocomplete="off"></label><button class="btn">${icon('plus')} Add account</button></form>` : ''}
         </section>
 
@@ -1058,10 +1071,18 @@ function settingsPage(gid) {
       });
       $('#leave')?.addEventListener('click', () => {
         g.members = g.members.filter(m => m.user !== me);
-        save(); toast(`You left ${esc(g.name)}`); go('#/home');
+        const mine = routerOf(me);
+        const stopped = mine ? mine.rules.filter(r => acct(r.to)?.group === g.id).length : 0;
+        save(); toast(`You left ${esc(g.name)}` + (stopped ? '. Your router rules for it are now inactive.' : '')); go('#/home');
       });
       $$('[data-close]').forEach(b => b.addEventListener('click', () => {
         acct(b.dataset.close).closed = true; save(); toast('Account closed'); render();
+      }));
+      $$('[data-rename]').forEach(b => b.addEventListener('click', () => {
+        const a = acct(b.dataset.rename);
+        const name = (prompt('New name for this account', a.name) || '').trim();
+        if (!name || name === a.name) return;
+        a.name = name; save(); toast(`Renamed to ${esc(name)}`); render();
       }));
       $('#addAcct')?.addEventListener('submit', ev => {
         ev.preventDefault();
@@ -1478,9 +1499,10 @@ function splitPreview(rt, amount) {
   }).join('')}</ul>`;
 }
 
-function routerEditor(rt, { targets, canEdit, head, after }) {
+function routerEditor(rt, { targets, restTargets = targets, canEdit, head, after }) {
   const draft = { rest: rt.rest, rules: rt.rules.map(r => ({ ...r })) };
-  const opt = (sel, includeEmpty) => (includeEmpty ? '<option value="">Choose account…</option>' : '') + targets.map(a =>
+  const opt = (sel, includeEmpty, list = targets) => (includeEmpty ? '<option value="">Choose account…</option>' : '')
+    + (sel && !list.some(a => a.id === sel) ? `<option value="${sel}" selected>${esc(label(sel))} — inactive</option>` : '') + list.map(a =>
     `<option value="${a.id}" ${a.id === sel ? 'selected' : ''}>${esc(label(a.id))} — ${kindOf(a)}</option>`).join('');
   const incoming = state.tx.filter(t => t.to === rt.id).sort((a, b) => b.ts - a.ts).slice(0, 6);
   return {
@@ -1491,7 +1513,7 @@ function routerEditor(rt, { targets, canEdit, head, after }) {
           <h3>Rules <span class="muted small">applied top to bottom</span></h3>
           <div id="rules"></div>
           ${canEdit ? `<button type="button" class="btn ghost" id="add">${icon('plus')} Add rule</button>` : ''}
-          <label class="field rest"><span>Everything left goes to</span><select name="rest" ${canEdit ? '' : 'disabled'}>${opt(draft.rest)}</select></label>
+          <label class="field rest"><span>Everything left goes to</span><select name="rest" ${canEdit ? '' : 'disabled'}>${opt(draft.rest, false, restTargets)}</select></label>
           ${canEdit ? `<div class="row end"><button type="button" class="btn" id="undo">Discard changes</button><button class="btn primary">${icon('check')} Save rules</button></div>`
             : `<p class="note">${icon('lock')} Only the owner can change the rules.</p>`}
         </form>
@@ -1517,7 +1539,7 @@ function routerEditor(rt, { targets, canEdit, head, after }) {
       const drawRules = () => {
         $('#rules').innerHTML = draft.rules.length ? draft.rules.map((r, i) => `
           <div class="rule" data-i="${i}">
-            <span class="rule-n">${i + 1}</span>
+            <span class="rule-n" ${r.to && !ruleActive(state, rt, r) ? 'title="Inactive: the account is closed, or you are no longer a member of its group. It takes nothing." style="background:var(--bad-soft);color:var(--bad)"' : ''}>${i + 1}</span>
             <select data-f="to" aria-label="Send to" ${canEdit ? '' : 'disabled'}>${opt(r.to, true)}</select>
             <div class="seg mini">
               <button type="button" data-f="mode" data-v="pct" class="${r.mode === 'pct' ? 'on' : ''}" ${canEdit ? '' : 'disabled'}>%</button>
@@ -1597,6 +1619,7 @@ function routerPage() {
 
   return routerEditor(rt, {
     targets: [...myPersonal(), ...myGroups().flatMap(g => groupAccounts(g.id))],
+    restTargets: myPersonal(),
     canEdit: true,
     head: `
       <a class="back" href="#/home">${icon('back')} Accounts</a>
