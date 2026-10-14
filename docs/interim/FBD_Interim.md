@@ -36,11 +36,26 @@ Clickable prototype: [`/demo`](../../demo)
 | Budgets inside a group | None | Subaccounts: a group can hold several OWT accounts, fed by a group router | A club can keep marketing, materials and joint exercises apart |
 | Transparency | Not addressed | Contribution visibility per group: members or private; group details only for invited members | Clubs want to recognise their largest contributors; churches want giving to stay private |
 | Setup | Manual | Account system templates: Couple, Club, Church, Custom | One step creates the right accounts, router and settings |
-| Payments by others | Owner only (revised UC-06) | Owner of a personal account, or a payer of a group | The treasurer and the partner must be able to pay bills |
+| Payments by others | A client or an authorised delegate (UC-06); no permission scope covered payments | Owner of a personal account, or the owner or a payer of a group | The scopes did not cover payments (feedback ③); the treasurer and the partner must be able to pay bills |
 | Use cases | 11 | 13 | Router, groups and templates added; permission management replaced |
 | Data entities | 7 | 10 | Group, Membership, Router and RouterRule added; Permission removed |
 
 Login lockout, dispute flags, administrator investigation and data-access consent are kept unchanged, except that `blocked_until` is now an attribute of User rather than of LoginAttempt: a block belongs to the user, and the login attempts are only its log.
+
+### Response to the Feedback on the Proposal
+
+The instructor's feedback on the submitted proposal raised the points below. Each is answered by a change in this revision; the last column shows where.
+
+| Feedback | Change in this revision | Where |
+|----------|-------------------------|-------|
+| ① Generated code often checks transfers and permissions only in the user interface; the checks belong in the server or database, with tests of requests that bypass the interface | Every request is authorised on the server. Requests that bypass the user interface are part of the acceptance criteria | CR-02; AC-05.3, AC-06.8, AC-07.11, AC-09.4, AC-10.7, AC-13.6 |
+| ① and ④-3 Balances must stay correct under concurrent transfers; define a pass criterion for N simultaneous requests | Pass criteria for simultaneous transfers, and for simultaneous payments from a group account, which must never go below zero | DR-02, DR-06; AC-07.10, AC-09.8 |
+| ② An alert by e-mail after five failed logins would need an external mail service | The alert is a message in the application only | UC-02; FR-02, AC-02.3 |
+| ② Lifting login blocks and expiring consents need no scheduler | Both are checked by comparing timestamps when a request arrives | CR-06; AC-02.5, AC-13.3 |
+| ② 99 % availability (NFR-02) is hard to achieve and measure on free hosting; state how it is measured | A measurement method is added | NFR-02 |
+| ③ and ④-1 No permission scope covered payments to external payees, so the core feature did not apply to payments | Permission scopes are replaced by group roles. Payment rights follow the role: the owner of a personal account, or the owner or a payer of a group | Table II; UC-09; FR-09, AC-09.4 |
+| ③ and ④-2 Negative balances for delegates conflict with tightly scoped delegation, and a negative account can hardly be closed | Only its owner takes money out of a personal account. A group's OWT account never goes below zero. A negative personal account is brought to zero before it is closed | Table II; DR-01, DR-06; UC-03; AC-03.6, AC-09.5 |
+| ③ The difference between DR-02 and a withdrawal, described as a payment to oneself, is unclear | A withdrawal is recorded as a payment, so DR-02 holds without a special case. The transaction types are listed in the data model | DR-02; AC-09.6; Table V |
 
 ---
 
@@ -123,7 +138,7 @@ Both services confirm that shared accounts are a real and widespread need. Both 
 
 ## IV. Main Functions of the Target Information System
 
-The functions are described below as use cases. The interim report elaborates them following the course's contents for a software requirements specification, which are based on IEEE Std 830 [5]. Those contents are the problem description, the system environment, the functional and non-functional requirement specifications, scenarios, the use case diagram, and supplementary diagrams. ISO/IEC/IEEE 29148:2018, which supersedes IEEE Std 830, serves as a supplementary reference [6].
+The functions are described below as use cases. This report elaborates them following the course's contents for a software requirements specification, which are based on IEEE Std 830 [5]. Those contents are the problem description, the system environment, the functional and non-functional requirement specifications, scenarios, the use case diagram, and supplementary diagrams. ISO/IEC/IEEE 29148:2018, which supersedes IEEE Std 830, serves as a supplementary reference [6].
 
 In accordance with the course convention, the name of each use case is also the name of the corresponding functional requirement. Accordingly, UC-01 to UC-13 map one-to-one onto the functional requirements FR-01 to FR-13, which are specified with acceptance criteria in [FR_Specification.md](FR_Specification.md).
 
