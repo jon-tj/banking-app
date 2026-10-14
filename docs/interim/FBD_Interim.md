@@ -164,7 +164,7 @@ A **group** is a set of members together with one or more OWT accounts, an optio
 
 **UC-02 Log In and Log Out.** A client authenticates with e-mail and password, and a session is established. Every attempt is recorded. After five consecutive failed attempts, the system blocks further login attempts for 24 hours by setting a `blocked_until` timestamp, and tells the user so on the login screen; no e-mail is sent. On each attempt, the system compares the current time with `blocked_until`; no scheduled job is used to lift the block. Logging out ends the session, and a session expires after 30 minutes without a request, checked against the time of the last request on each new request.
 
-**UC-03 Manage Personal Accounts.** A client opens spending and savings accounts; each receives a unique account number and starts with a zero balance. The client can view the accounts with balances, rename an account, and close an account whose balance is zero, which is not the target of any router rule, and which has no open dispute flag.
+**UC-03 Manage Personal Accounts.** A client opens spending and savings accounts; each receives a unique account number and starts with a zero balance. The client can view the accounts with balances, rename an account, and close an account whose balance is zero, which is not the target of any router rule, and which has no open dispute flag. An account with a negative balance (DR-01) is first brought to zero by a deposit or by a transfer from another of the client's accounts.
 
 **UC-04 Set Up Group from Template.** A client creates a group by choosing a template, naming the group, and adjusting the proposed settings before confirming. The client becomes the group owner. The templates are:
 
@@ -228,7 +228,7 @@ Non-functional requirements are classified into product, organisational and exte
 #### Product requirements
 
 - **NFR-01 Performance.** The account overview, including balances, loads within 3 seconds under normal load.
-- **NFR-02 Reliability.** The system is available at least 99% of the time during the evaluation period (Weeks 12 to 14), and no committed transaction is lost.
+- **NFR-02 Reliability.** The system is available at least 99% of the time during the evaluation period (Weeks 12 to 14), and no committed transaction is lost. Availability is measured by an external uptime monitor that requests the execution URL every 5 minutes, as the share of successful checks over the period.
 - **NFR-03 Security.** Passwords are stored as salted hashes, all traffic uses HTTPS, every request is authorised on the server side, and repeated failed logins trigger the lockout of UC-02.
 - **NFR-04 Usability.** Core tasks can be completed in a desktop or mobile web browser without prior training. A first-time user can set up a group from a template in under two minutes.
 - **NFR-05 Maintainability.** All components are unit tested, and the main flows (UC-02, UC-04, UC-07, UC-08 with a router, and UC-11) are covered by integration tests.
@@ -249,7 +249,7 @@ Non-functional requirements are classified into product, organisational and exte
 The banking domain imposes rules that every function must respect:
 
 - **DR-01** The balance of a personal account may become negative. No overdraft limit is imposed.
-- **DR-02** Every transfer debits one account and credits another by the same amount within a single atomic transaction. At all times, the sum of balances equals the net total of deposits minus payments.
+- **DR-02** Every transfer debits one account and credits another by the same amount within a single atomic transaction. At all times, the sum of balances equals the net total of deposits minus payments. A withdrawal is recorded as a payment (UC-09), so it needs no separate rule.
 - **DR-03** Funds are denominated in Korean won (KRW), with 1 KRW as the smallest unit. All monetary values, including balances, transfer amounts, deposits, payments and fixed router rules, are stored as signed 64-bit integers, so no rounding errors can occur.
 - **DR-04** A closed account can neither send nor receive funds, and a committed transaction is never modified or deleted. Corrections are made only through new transactions.
 - **DR-05** A router never holds money. When an amount arrives, its rules are applied in order: a percentage rule takes that percentage of the received amount, rounded down to whole won; a fixed rule takes its amount; each rule takes at most what is left; and whatever remains goes to the remainder account. The incoming amount and all resulting transfers are committed together or not at all, and each resulting transfer records the actor of the incoming amount as its actor (so a split through a group router is credited to the member who paid) and the incoming transaction as its cause.
@@ -270,7 +270,7 @@ Table V lists the ten data entities currently anticipated, exceeding the minimum
 | Membership | group_id, user_id, role (owner / payer / contributor), state (invited / active), invited_at, joined_at | UC-04, UC-06, UC-09, UC-10 |
 | Router | router_no, owner_id or group_id, remainder_account | UC-04, UC-05, UC-08 |
 | RouterRule | router_no, position, target_account, mode (percent / fixed), value | UC-04, UC-05, UC-08 |
-| Transaction | tx_id, type, from_account, to_account / payee, amount (int64, KRW), actor_id, cause_tx_id, timestamp | UC-07 to UC-10, UC-12 |
+| Transaction | tx_id, type (deposit / transfer / payment), from_account, to_account / payee, amount (int64, KRW), actor_id, cause_tx_id, timestamp | UC-07 to UC-10, UC-12 |
 | LoginAttempt | attempt_id, user_id, success, timestamp | UC-02 |
 | TransactionFlag | flag_id, tx_id, reporter_id, reason, state, resolution_note | UC-11, UC-12 |
 | Consent | consent_id, flag_id, client_id, admin_id, state, expires_at | UC-13 |

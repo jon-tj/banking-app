@@ -113,6 +113,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-03.3** Renaming changes the name and leaves the account number and history unchanged.
 - **AC-03.4** Closing is rejected, with the reason shown, for an account with a balance other than ₩0, for an account that a router rule or remainder points to, and for an account with an open flag.
 - **AC-03.5** A closed account keeps its history. Transfers to and from it are rejected.
+- **AC-03.6** A spending account with a balance of −₩20,000 cannot be closed. After a deposit of ₩20,000 it can.
 
 ### FR-04 Set Up Group from Template
 
