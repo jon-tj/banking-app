@@ -242,11 +242,11 @@ Non-functional requirements are classified into product, organisational and exte
 
 #### Product requirements
 
-- **NFR-01 Performance.** The account overview, including balances, loads within 3 seconds under normal load.
+- **NFR-01 Performance.** The account overview, including balances, loads within 3 seconds for 95 % of requests, measured at the execution URL with 10 users working at the same time and 10,000 transactions in the ledger.
 - **NFR-02 Reliability.** The system is available at least 99% of the time during the evaluation period (Weeks 12 to 14), and no committed transaction is lost. Availability is measured by an external uptime monitor that requests the execution URL every 5 minutes, as the share of successful checks over the period.
 - **NFR-03 Security.** Passwords are stored as salted hashes, all traffic uses HTTPS, every request is authorised on the server side, and repeated failed logins trigger the lockout of UC-02.
 - **NFR-04 Usability.** Core tasks can be completed in a desktop or mobile web browser without prior training. A first-time user can set up a group from a template in under two minutes.
-- **NFR-05 Maintainability.** All components are unit tested, and the main flows (UC-02, UC-04, UC-07, UC-08 with a router, and UC-11) are covered by integration tests.
+- **NFR-05 Maintainability.** Every acceptance criterion of a Must requirement is checked by at least one automated test, and the main flows (UC-02, UC-04, UC-07, UC-08 with a router, and UC-11) are covered by integration tests.
 
 #### Organisational requirements
 
