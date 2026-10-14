@@ -177,13 +177,14 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 2. If none exists, the client creates it: a personal router gets the client's spending account as remainder; a group router gets one of the group's OWT accounts.
 3. The system shows the router number, the ordered rules, the remainder account, a split preview, and the most recent amounts received with the transfers each caused.
 4. The client adds, edits or removes rules. A rule has a target account, a mode (percentage or fixed amount) and a value. Permitted targets: for a personal router, the client's personal accounts and the OWT accounts of groups the client is a member of; for a group router, only that group's OWT accounts.
-5. The client chooses the remainder account.
+5. The client chooses the remainder account: for a personal router, one of the client's personal accounts; for a group router, one of the group's OWT accounts.
 6. The system updates the preview for a sample amount, using the algorithm of DR-05.
 7. The client saves; the system stores the rules.
 
 **Alternative flows**
 - **A1 Read-only:** a member who is not the owner opens the group number; the system shows the rules and preview without editing controls.
 - **A2 Discard:** the client discards the changes; the saved rules are shown again.
+- **A3 Inactive rule:** a rule whose target is closed, or belongs to a group the client is no longer an active member of, is shown as inactive. It takes nothing (DR-05); the client may delete it.
 
 **Exception flows**
 - **E1 Incomplete rule** (step 7): a rule has no target or a value of zero. The system rejects the save and names the problem.
@@ -208,10 +209,10 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 **Alternative flows**
 - **A1 Change visibility:** the owner selects *members* or *private*; the system applies it immediately (DR-07).
 - **A2 Change role:** the owner changes a member between payer and contributor.
-- **A3 Remove member:** the owner removes a member. Past contributions remain in the history.
+- **A3 Remove member:** the owner removes a member. Past contributions remain in the history. Rules in the member's router that target the group's accounts become inactive (DR-05).
 - **A4 Add account:** the owner enters a name; the system creates a new OWT account in the group.
-- **A5 Close account:** the owner closes an account. The system checks that the group keeps at least one account, the balance is zero, and no router rule or remainder points to it.
-- **A6 Leave group:** a member who is not the owner leaves the group.
+- **A5 Close account:** the owner closes an account. The system checks that the group keeps at least one account, the balance is zero, and no rule or remainder of the group's own router points to it. Rules in members' personal routers that point to it become inactive (DR-05).
+- **A6 Leave group:** a member who is not the owner leaves the group. Rules in the member's router that target the group's accounts become inactive (DR-05).
 - **A7 Answer an invitation:** the invited client sees the group's name, the role and the contribution visibility, and accepts or declines. On accepting, the membership becomes *active*; on declining, the invitation is removed and the owner sees that it was declined.
 - **A8 Withdraw an invitation:** the owner withdraws a pending invitation.
 

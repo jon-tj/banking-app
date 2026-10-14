@@ -148,7 +148,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 |---|---|
 | **Use case** | UC-05 · **Priority** Must |
 | **Actor** | Client (personal router); Group owner (group router) |
-| **Requirement** | The system shall let a client create and edit one personal router, and a group owner one router for the group. A router has a unique number, an ordered list of rules and a remainder account; each rule sends a percentage of the received amount, or a fixed amount, to a target account. Rules in a personal router shall target only the client's personal accounts and OWT accounts of groups the client is an active member of. Rules in a group router shall target only that group's OWT accounts. The system shall preview how a given amount would be split, and apply saved changes from the next amount the router receives. |
+| **Requirement** | The system shall let a client create and edit one personal router, and a group owner one router for the group. A router has a unique number, an ordered list of rules and a remainder account; each rule sends a percentage of the received amount, or a fixed amount, to a target account. Rules in a personal router shall target only the client's personal accounts and OWT accounts of groups the client is an active member of. Rules in a group router shall target only that group's OWT accounts. The remainder account of a personal router shall be one of the client's personal accounts, and that of a group router one of the group's OWT accounts. The system shall preview how a given amount would be split, and apply saved changes from the next amount the router receives. |
 | **Inputs** | Rules (target, mode, value), order, remainder account; preview amount |
 | **Outputs** | Saved router; split preview; list of recently received amounts with the transfers each caused |
 | **Business rules** | DR-05, Table II |
@@ -164,6 +164,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-05.5** Rules whose percentages add up to more than 100 % are saved with a warning. Later rules then receive only what is left, possibly nothing.
 - **AC-05.6** A member who is not the owner can view the group router but not change it.
 - **AC-05.7** Amounts received before a change keep their original split. The next amount uses the new rules.
+- **AC-05.8** A rule whose target account is closed, or belongs to a group the client is no longer an active member of, is shown as inactive. When an amount arrives, the rule takes nothing and its share goes to the following rules and the remainder account; nothing is sent to the group (DR-05).
 
 ### FR-06 Manage Group
 
@@ -183,10 +184,11 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-06.4** After the owner withdraws a pending invitation, the invited user no longer sees it.
 - **AC-06.5** A change of visibility applies to the next page any member opens (FR-10).
 - **AC-06.6** Changing a member from contributor to payer lets them pay from the group's accounts straight away (FR-09). Changing back removes this.
-- **AC-06.7** Closing a group account is rejected if any of these holds: its balance is not ₩0, a router rule or remainder points to it, or it is the group's only account.
+- **AC-06.7** Closing a group account is rejected if any of these holds: its balance is not ₩0, a rule or the remainder of the group's own router points to it, or it is the group's only account. Rules in members' personal routers do not prevent closing; they become inactive (AC-05.8).
 - **AC-06.8** A member who is not the owner cannot invite, change roles, change visibility, or add or close accounts. The server rejects such requests.
 - **AC-06.9** The owner cannot leave the group or be removed from it.
 - **AC-06.10** Every change appears in the group's change log with the acting user and time.
+- **AC-06.12** After Joon leaves the group, or is removed from it, the rule "₩800,000 → Our home" in his router is inactive, and his next income sends nothing to the group (AC-05.8).
 
 ### FR-07 Transfer Funds
 
