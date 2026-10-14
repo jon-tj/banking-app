@@ -117,3 +117,14 @@ Still open:
 1. Use screens 03, 06, 07, 10, 13, 14, 17 and 23 as the key UI screens; together they show all three building blocks, the templates, both visibility levels and an invitation.
 2. Add static mock-ups for the missing use cases: login with lockout (UC-02), flagging a transaction and following its status (UC-11), the administrator's search with masked details (UC-12), and the consent request (UC-13).
 3. Show screen 23 (invitation) in the report next to the visibility screens, since it is where NFR-09 becomes visible to the user.
+
+## 6. Mock-ups for the missing use cases
+
+Static mock-ups in [`mockups/`](mockups) show the four use cases the prototype does not cover yet, in the prototype's visual style. They are not clickable. Each is marked *Mock-up* in its header.
+
+| File | Use case | Shows |
+|------|----------|-------|
+| `m1-login-blocked.html` | UC-02 | The login form after five failed attempts: login is blocked, and the message states when it reopens. |
+| `m2-flag.html` | UC-11 | Minji flags an unknown payment with a reason, and follows an earlier flag through *Open*, *Under Review* and *Resolved*. |
+| `m3-admin.html` | UC-12 | The administrator's search by time range or user, with names and e-mail addresses masked, and the open flags with their next step. |
+| `m4-consent.html` | UC-13 | A consent request shown only to the client whose details are requested, and a granted consent with its expiry and a revoke button. |
