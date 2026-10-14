@@ -125,7 +125,7 @@ Both services confirm that shared accounts are a real and widespread need. Both 
 
 The functions are described below as use cases. The interim report elaborates them following the course's contents for a software requirements specification, which are based on IEEE Std 830 [5]. Those contents are the problem description, the system environment, the functional and non-functional requirement specifications, scenarios, the use case diagram, and supplementary diagrams. ISO/IEC/IEEE 29148:2018, which supersedes IEEE Std 830, serves as a supplementary reference [6].
 
-In accordance with the course convention, the name of each use case is also the name of the corresponding functional requirement. Accordingly, UC-01 to UC-13 map one-to-one onto the functional requirements FR-01 to FR-13.
+In accordance with the course convention, the name of each use case is also the name of the corresponding functional requirement. Accordingly, UC-01 to UC-13 map one-to-one onto the functional requirements FR-01 to FR-13, which are specified with acceptance criteria in [FR_Specification.md](FR_Specification.md).
 
 ### A. Building Blocks
 

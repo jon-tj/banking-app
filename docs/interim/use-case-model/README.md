@@ -40,7 +40,7 @@ Use case model of the FBD Bank system, based on the revised proposal ([FBD_Inter
 
 ### Mapping of functional requirements
 
-Each functional requirement maps to exactly one use case of the same number and name.
+Each functional requirement maps to exactly one use case of the same number and name. The requirements, with acceptance criteria, are in [FR_Specification.md](../FR_Specification.md).
 
 | FR | Use case | FR | Use case |
 |----|----------|----|----------|

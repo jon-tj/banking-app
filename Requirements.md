@@ -1,29 +1,9 @@
-## Functional
+# Requirements
 
-As a client, I want to be able to create a User.
+The requirements are maintained in `docs/interim`:
 
-As a client, I want to be able to manage Accounts linked to my User.
+- **Functional requirements FR-01 to FR-13:** [FR_Specification.md](docs/interim/FR_Specification.md)
+- **Non-functional requirements NFR-01 to NFR-10 and domain requirements DR-01 to DR-07:** Section IV of [FBD_Interim.md](docs/interim/FBD_Interim.md)
+- **Use cases UC-01 to UC-13:** [use case model](docs/interim/use-case-model/README.md)
 
-As a client, I want to be able to make a Transaction from one of my Accounts to another Account also inside the banking system.
-
-As a client, I want to be able to make a Deposit or Payment from my Accounts. A withdrawal is treated as a self-payment. As this is a demo app, Payments will only be handled on the Senders side, not Recipient.
-
-As a client, I want to be able to manage Permissions for Accounts I can manage, so that another clients User is able to act on my Account. Permissions include reading Balance, making Transfers to selected Accounts or any Account, and managing Permissions.
-
-System shall alert user after repeated failed login attempts and block further login attempts for a day.
-
-As admin, I want to be able to investigate transactions by time or by user.
-
-As admin, I should not be able to look into user details without explicit consent from client.
-
-As a client, I want to be able to flag a transaction as unauthorized or not initiated by myself.
-
-## Non-functional
-
-As a client, I want to see my balance and load the website within 3 seconds.
-
-System shall be available at least 99% of the time.
-
-System components shall be unit tested and integration tested.
-
-As a client, I want my login details to be secure.
+The user stories that were here described the first design, with delegated permission scopes per account. They were replaced on October 14, 2026, when the product focus changed to shared money for groups; see the changes table at the start of FBD_Interim.md. The old text is in the git history.
