@@ -172,7 +172,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 |---|---|
 | **Use case** | UC-06 · **Priority** Must |
 | **Actor** | Group owner; Member (invited client accepting or declining, or member leaving) |
-| **Requirement** | The system shall let a group owner do the following: invite registered users as payer or contributor, and withdraw pending invitations; change members' roles and remove members; set the contribution visibility to *members* or *private*; add OWT accounts and close empty ones; create a group number. It shall show an invited user the group's name, the offered role and the group's visibility, and make the user a member only when they accept. It shall let a member who is not the owner leave the group. |
+| **Requirement** | The system shall let a group owner do the following: invite registered users as payer or contributor, and withdraw pending invitations; change members' roles and remove members; set the contribution visibility to *members* or *private*; add, rename and close OWT accounts. The group number is created and edited under FR-05. It shall show an invited user the group's name, the offered role and the group's visibility, and make the user a member only when they accept. It shall let a member who is not the owner leave the group. |
 | **Inputs** | User and role; invitation answer; new role; visibility; account name; close request; leave request |
 | **Outputs** | Updated group; invitation shown to the invited user; change log entries |
 | **Business rules** | DR-07, NFR-09, CR-03 |
@@ -188,6 +188,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-06.8** A member who is not the owner cannot invite, change roles, change visibility, or add or close accounts. The server rejects such requests.
 - **AC-06.9** The owner cannot leave the group or be removed from it.
 - **AC-06.10** Every change appears in the group's change log with the acting user and time.
+- **AC-06.11** Renaming a group account changes its name and leaves its number and history unchanged.
 - **AC-06.12** After Joon leaves the group, or is removed from it, the rule "₩800,000 → Our home" in his router is inactive, and his next income sends nothing to the group (AC-05.8).
 
 ### FR-07 Transfer Funds

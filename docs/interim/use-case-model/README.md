@@ -210,7 +210,7 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 - **A1 Change visibility:** the owner selects *members* or *private*; the system applies it immediately (DR-07).
 - **A2 Change role:** the owner changes a member between payer and contributor.
 - **A3 Remove member:** the owner removes a member. Past contributions remain in the history. Rules in the member's router that target the group's accounts become inactive (DR-05).
-- **A4 Add account:** the owner enters a name; the system creates a new OWT account in the group.
+- **A4 Add or rename account:** the owner enters a name; the system creates a new OWT account in the group, or renames an existing one and keeps its number and history.
 - **A5 Close account:** the owner closes an account. The system checks that the group keeps at least one account, the balance is zero, and no rule or remainder of the group's own router points to it. Rules in members' personal routers that point to it become inactive (DR-05).
 - **A6 Leave group:** a member who is not the owner leaves the group. Rules in the member's router that target the group's accounts become inactive (DR-05).
 - **A7 Answer an invitation:** the invited client sees the group's name, the role and the contribution visibility, and accepts or declines. On accepting, the membership becomes *active*; on declining, the invitation is removed and the owner sees that it was declined.
