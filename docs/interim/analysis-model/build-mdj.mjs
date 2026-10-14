@@ -487,7 +487,7 @@ enumeration('ConsentState', ['pending', 'granted', 'denied', 'revoked'], 860, EY
 const opt = { multiplicity: '0..1' };
 entity('User', [
   ['user_id', 'Integer'], ['name', 'String'], ['email', 'String'], ['password_hash', 'String'],
-  ['role', 'UserRole'], ['status', 'String'], ['blocked_until', 'DateTime', opt],
+  ['role', 'UserRole'], ['blocked_until', 'DateTime', opt],
 ], 40, 380, 'A registered person (UC-01). blocked_until is set after five consecutive failed logins and compared with the current time on each attempt (UC-02).');
 entity('LoginAttempt', [
   ['attempt_id', 'Integer'], ['success', 'Boolean'], ['timestamp', 'DateTime'],
@@ -517,6 +517,10 @@ entity('TransactionFlag', [
 entity('Consent', [
   ['consent_id', 'Integer'], ['state', 'ConsentState'], ['requested_at', 'DateTime'], ['expires_at', 'DateTime', opt],
 ], 440, 940, 'Permission to see a client\'s personal details for one flag (UC-13); valid while granted and now < expires_at.');
+entity('AuditEvent', [
+  ['event_id', 'Integer'], ['actor_id', 'Integer'], ['action', 'String'], ['entity', 'String'],
+  ['entity_id', 'String'], ['group_id', 'Integer', opt], ['timestamp', 'DateTime'],
+], 1240, 880, 'One recorded change of data (CR-03), including a group\'s change log (AC-06.10), or one display of unmasked personal details (AC-13.5). Never changed or deleted.');
 
 let assocNo = 0;
 /** An association from class `a` to class `b`, with a multiplicity and optionally a role name at each end. */
@@ -560,6 +564,9 @@ noteLink(cd, 'xor-account', xorAccount, classes.get('Account').view);
 const xorRouter = note(cd, 'xor-router', '{xor} A router is a user\'s personal router or a group\'s group number, never both.',
   { left: 1580, top: 120, width: 260, height: 54 });
 noteLink(cd, 'xor-router', xorRouter, classes.get('Router').view);
+const auditIds = note(cd, 'audit-ids', 'AuditEvent keeps its references as identifiers: an event can refer to any entity, and the log outlives what it describes (DR-04).',
+  { left: 1580, top: 900, width: 260, height: 68 });
+noteLink(cd, 'audit-ids', auditIds, classes.get('AuditEvent').view);
 
 /* ---------- lines, integrity check, output ---------- */
 

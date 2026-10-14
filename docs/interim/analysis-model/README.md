@@ -64,13 +64,15 @@ Analysis objects: the Client, `«boundary» DepositPage`, `«control» DepositCo
 
 ### 5. Class diagram: Domain Model (Table V)
 
-The entities of Table V except AuditEvent, with their attributes, eleven enumerations for the types and states, and the associations between them with multiplicities.
+The entities of Table V with their attributes, eleven enumerations for the types and states, and the associations between them with multiplicities.
 
 - Foreign keys in Table V (`owner_id`, `group_id`, `tx_id`, `reporter_id`, …) are drawn as associations instead of attributes.
 - Two `{xor}` notes record that an account is owned by a user *or* a group, and a router is a user's personal router *or* a group's group number, never both.
 - `Router` is composed of its `RouterRule`s, ordered by position.
 - `Transaction` has a self-association from each transfer to the transaction that caused it (DR-05).
 - `blocked_until` is an attribute of `User`, not of `LoginAttempt`; Table V in the interim report has been changed to match (see below).
+- `AuditEvent` keeps its references as identifiers instead of associations: an event can refer to any entity, and the log outlives what it describes (DR-04).
+- `AuditEvent` and the removal of `User.status` are in `FBD_Analysis.mdj`; the image in `exports/svg` shows them after the next export from StarUML.
 
 ---
 
@@ -85,4 +87,5 @@ These follow from the use case descriptions and the domain rules, but are not st
 | `blocked_until` belongs to `User`. | Class diagram, Table V | UC-02 reads "the user's `blocked_until`"; the login attempts are only the log. Table V and the list of changes in the interim report now say the same. |
 | Attributes added beyond Table V: `Transaction.counterparty` and `message`, `TransactionFlag.created_at`, `Consent.requested_at`, `Account./balance` (derived). | Class diagram | UC-07 to UC-09 record a message, a payee or a sender; UC-11 records the time of flagging; UC-13 records the request. The balance is shown as derived until design decides how it is stored (G2). Table V now lists them, except the derived balance. |
 | `User.status` is removed. | Class diagram, Table V | It held the login block in the proposal; the block is now `blocked_until` (UC-02), and no use case reads or changes a status. The class diagram still shows it until its next export. |
+| `AuditEvent` keeps its references as identifiers. | Class diagram, Table V | An event can refer to any entity, and the log outlives what it describes (DR-04). |
 | A withdrawal is a payment, not a transaction type of its own. | `TransactionType` | UC-09 A1: a withdrawal is a payment to the acting user. |

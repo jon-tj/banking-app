@@ -293,7 +293,7 @@ Table V lists the eleven data entities currently anticipated, exceeding the mini
 
 Balances are not stored but derived from the transaction ledger, or stored together with each transaction in the same atomic write, as decided during design (G2).
 
-AuditEvent records every change of data (CR-03), which includes a group's change log, and every display of unmasked personal details (AC-13.5). It is not yet drawn in the domain class diagram of the analysis model. Sessions are kept by the authentication service of the hosting platform and are not a domain entity; the idle limit of UC-02 is checked against the time of a session's last request. `User.status` of the submitted proposal is removed: it held the login block, which is now `blocked_until`.
+AuditEvent records every change of data (CR-03), which includes a group's change log, and every display of unmasked personal details (AC-13.5). It is part of the StarUML analysis model, but the exported class diagram does not show it yet. Sessions are kept by the authentication service of the hosting platform and are not a domain entity; the idle limit of UC-02 is checked against the time of a session's last request. `User.status` of the submitted proposal is removed: it held the login block, which is now `blocked_until`.
 
 ## V. Work Breakdown Structure
 

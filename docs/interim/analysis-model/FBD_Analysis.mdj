@@ -2204,7 +2204,7 @@
 									"left": 40,
 									"top": 380,
 									"width": 250,
-									"height": 174,
+									"height": 156,
 									"showVisibility": false
 								},
 								{
@@ -2343,6 +2343,21 @@
 									"showVisibility": false
 								},
 								{
+									"_type": "UMLClassView",
+									"_id": "gw6v653wtGv1gPYk1Wup",
+									"_parent": {
+										"$ref": "pvumGFUs3Wr3lS3fGutX"
+									},
+									"model": {
+										"$ref": "KLC9/h6pBALmzAIgOsPP"
+									},
+									"left": 1240,
+									"top": 880,
+									"width": 250,
+									"height": 174,
+									"showVisibility": false
+								},
+								{
 									"_type": "UMLAssociationView",
 									"_id": "y2ofIwl3jy/gOMvTODk4",
 									"_parent": {
@@ -2358,7 +2373,7 @@
 										"$ref": "2emUGiyNCmbeWMQ/PH57"
 									},
 									"lineStyle": 1,
-									"points": "165:467;565:100"
+									"points": "165:458;565:100"
 								},
 								{
 									"_type": "UMLAssociationView",
@@ -2394,7 +2409,7 @@
 										"$ref": "iVP20W4XyMVsPkyJWS9G"
 									},
 									"lineStyle": 1,
-									"points": "165:467;965:100"
+									"points": "165:458;965:100"
 								},
 								{
 									"_type": "UMLAssociationView",
@@ -2412,7 +2427,7 @@
 										"$ref": "Xfb8p72r7dAMo4UgU2ir"
 									},
 									"lineStyle": 1,
-									"points": "165:467;160:15;1290:15;1365:73"
+									"points": "165:458;160:15;1290:15;1365:73"
 								},
 								{
 									"_type": "UMLAssociationView",
@@ -2448,7 +2463,7 @@
 										"$ref": "EdW9a3lGxsctyQsyrKVV"
 									},
 									"lineStyle": 1,
-									"points": "165:467;965:458"
+									"points": "165:458;965:458"
 								},
 								{
 									"_type": "UMLAssociationView",
@@ -2610,7 +2625,7 @@
 										"$ref": "AUa4/S0JQdGa53S1eHOF"
 									},
 									"lineStyle": 1,
-									"points": "965:818;740:640;300:640;165:467"
+									"points": "965:818;740:640;300:640;165:458"
 								},
 								{
 									"_type": "UMLAssociationView",
@@ -2646,7 +2661,7 @@
 										"$ref": "AUa4/S0JQdGa53S1eHOF"
 									},
 									"lineStyle": 1,
-									"points": "565:809;165:467"
+									"points": "565:809;165:458"
 								},
 								{
 									"_type": "UMLAssociationView",
@@ -2682,7 +2697,7 @@
 										"$ref": "AUa4/S0JQdGa53S1eHOF"
 									},
 									"lineStyle": 1,
-									"points": "565:1000;370:960;165:467"
+									"points": "565:1000;370:960;165:458"
 								},
 								{
 									"_type": "UMLAssociationView",
@@ -2700,7 +2715,7 @@
 										"$ref": "AUa4/S0JQdGa53S1eHOF"
 									},
 									"lineStyle": 1,
-									"points": "565:1000;330:1060;165:467"
+									"points": "565:1000;330:1060;165:458"
 								},
 								{
 									"_type": "UMLAssociationView",
@@ -2718,7 +2733,7 @@
 										"$ref": "AUa4/S0JQdGa53S1eHOF"
 									},
 									"lineStyle": 1,
-									"points": "165:1051;165:467"
+									"points": "165:1051;165:458"
 								},
 								{
 									"_type": "UMLNoteView",
@@ -2773,6 +2788,33 @@
 									},
 									"lineStyle": 1,
 									"points": "1710:147;1365:73"
+								},
+								{
+									"_type": "UMLNoteView",
+									"_id": "Qs4XV9px4rihKhNGeOOc",
+									"_parent": {
+										"$ref": "pvumGFUs3Wr3lS3fGutX"
+									},
+									"text": "AuditEvent keeps its references as identifiers: an event can refer to any entity, and the log outlives what it describes (DR-04).",
+									"left": 1580,
+									"top": 900,
+									"width": 260,
+									"height": 68
+								},
+								{
+									"_type": "UMLNoteLinkView",
+									"_id": "dk2CdHzj2fJtgjv3CIEW",
+									"_parent": {
+										"$ref": "pvumGFUs3Wr3lS3fGutX"
+									},
+									"tail": {
+										"$ref": "Qs4XV9px4rihKhNGeOOc"
+									},
+									"head": {
+										"$ref": "gw6v653wtGv1gPYk1Wup"
+									},
+									"lineStyle": 1,
+									"points": "1710:934;1365:967"
 								}
 							]
 						},
@@ -3200,15 +3242,6 @@
 									"type": {
 										"$ref": "TSR63eXV1Zt5jmIl5y7s"
 									}
-								},
-								{
-									"_type": "UMLAttribute",
-									"_id": "9btQ292NVmpm//kJ1As8",
-									"_parent": {
-										"$ref": "GCK3Y/vPoAxaSO5ob76y"
-									},
-									"name": "status",
-									"type": "String"
 								},
 								{
 									"_type": "UMLAttribute",
@@ -4315,6 +4348,82 @@
 									}
 								}
 							]
+						},
+						{
+							"_type": "UMLClass",
+							"_id": "KLC9/h6pBALmzAIgOsPP",
+							"_parent": {
+								"$ref": "tXL7CAVq2TQaWaPL2chB"
+							},
+							"name": "AuditEvent",
+							"documentation": "One recorded change of data (CR-03), including a group's change log (AC-06.10), or one display of unmasked personal details (AC-13.5). Never changed or deleted.",
+							"attributes": [
+								{
+									"_type": "UMLAttribute",
+									"_id": "2y0iUg776RdrK2HC8GXn",
+									"_parent": {
+										"$ref": "KLC9/h6pBALmzAIgOsPP"
+									},
+									"name": "event_id",
+									"type": "Integer"
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "+7VbC8hgRCosfJDBbBtP",
+									"_parent": {
+										"$ref": "KLC9/h6pBALmzAIgOsPP"
+									},
+									"name": "actor_id",
+									"type": "Integer"
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "1vm/QovfxXsA/h3U7UyQ",
+									"_parent": {
+										"$ref": "KLC9/h6pBALmzAIgOsPP"
+									},
+									"name": "action",
+									"type": "String"
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "AyknASgcNqUNTzj8N4dH",
+									"_parent": {
+										"$ref": "KLC9/h6pBALmzAIgOsPP"
+									},
+									"name": "entity",
+									"type": "String"
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "e8F5fVnJeHecan/RRcKF",
+									"_parent": {
+										"$ref": "KLC9/h6pBALmzAIgOsPP"
+									},
+									"name": "entity_id",
+									"type": "String"
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "ZmApSmORXeZcyAD2y1/r",
+									"_parent": {
+										"$ref": "KLC9/h6pBALmzAIgOsPP"
+									},
+									"name": "group_id",
+									"type": "Integer",
+									"multiplicity": "0..1"
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "K9Nrqaffx2XJbHBAWk2p",
+									"_parent": {
+										"$ref": "KLC9/h6pBALmzAIgOsPP"
+									},
+									"name": "timestamp",
+									"type": "DateTime"
+								}
+							],
+							"ownedElements": []
 						}
 					],
 					"documentation": "Entity classes from Table V of the interim report."
