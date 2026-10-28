@@ -243,21 +243,31 @@ Non-functional requirements are classified into product, organisational and exte
 #### Product requirements
 
 - **NFR-01 Performance.** The account overview, including balances, loads within 3 seconds for 95 % of requests, measured at the execution URL with 10 users working at the same time and 10,000 transactions in the ledger.
+  *Verified by:* a load test against the execution URL in Week 12, in which 10 simulated users request the account overview for 10 minutes on a ledger seeded with 10,000 transactions. The test passes if the 95th-percentile response time is at most 3 seconds.
 - **NFR-02 Reliability.** The system is available at least 99% of the time during the evaluation period (Weeks 12 to 14), and no committed transaction is lost. Availability is measured by an external uptime monitor that requests the execution URL every 5 minutes, as the share of successful checks over the period.
-- **NFR-03 Security.** Passwords are stored as salted hashes, all traffic uses HTTPS, every request is authorised on the server side, and repeated failed logins trigger the lockout of UC-02.
-- **NFR-04 Usability.** Core tasks can be completed in a desktop or mobile web browser without prior training. A first-time user can set up a group from a template in under two minutes.
-- **NFR-05 Maintainability.** Every acceptance criterion of a Must requirement is checked by at least one automated test, and the main flows (UC-02, UC-04, UC-07, UC-08 with a router, and UC-11) are covered by integration tests.
+  *Verified by:* the uptime monitor's report for Weeks 12 to 14, which must show at least 99 % successful checks, and a reconciliation at the end of Week 14 confirming that every transaction committed during the period is still in the ledger and that every account balance equals the sum of its ledger entries.
+- **NFR-03 Security.** Passwords are stored as salted hashes, all traffic uses HTTPS, every request is authorised on the server side, repeated failed logins trigger the lockout of UC-02, and a session expires after 30 minutes without a request.
+  *Verified by:* automated security tests that check that (a) no password is stored in plain text and two users with the same password have different hashes; (b) a request over plain HTTP is redirected to HTTPS; (c) requests sent directly to the server, bypassing the user interface, are refused when they carry no session, another user's session, or a staff session without client consent; (d) after five consecutive failed attempts, a login with the correct password is refused until the block ends; and (e) a request made more than 30 minutes after a session's last request is refused and requires a new login.
+- **NFR-04 Usability.** A first-time user, without prior training, can set up a group from a template in under two minutes in a desktop or mobile web browser.
+  *Verified by:* a usability test in Week 13 with at least two people who have not used the app, one in a desktop browser and one in a mobile browser. Each is given only the task "set up a group from a template" and is timed from the logged-in home screen until the group is created. The test passes if each finishes in under two minutes without help. Times and observed problems are recorded in the test report.
+- **NFR-05 Maintainability.** Every acceptance criterion of a Must requirement is checked by at least one automated test, and the main flows (UC-02, UC-04, UC-07, UC-08 with a router, and UC-11) are covered by integration tests. The automated tests cover at least 70 % of the statements in server-side code.
+  *Verified by:* the requirements traceability matrix (WBS 5.2), which maps each acceptance criterion of a Must requirement to at least one passing automated test, and the test report (WBS 5.1), which shows passing integration tests for each listed flow and the statement coverage of server-side code measured by a coverage tool.
 
 #### Organisational requirements
 
 - **NFR-06 Development process.** The system is implemented by AI-assisted vibe coding, and the final prompts must reproduce a working system.
+  *Verified by:* the prompt reproducibility report (WBS 5.4), in which at least three regeneration runs from the final prompts in a clean environment each produce a system that passes the automated test suite.
 - **NFR-07 Modeling standard.** Requirements and design models are expressed in UML and produced with StarUML.
+  *Verified by:* a review before each submission confirming that every requirements and design diagram in the report uses UML notation and is exported from the team's StarUML project.
 - **NFR-08 Documentation.** All deliverables are written in English and submitted in PDF format. Reports are single-spaced in a 12-point font with 1-inch margins.
+  *Verified by:* a checklist review of each deliverable before submission covering language, file format, line spacing, font size and margins.
 
 #### External requirements
 
 - **NFR-09 Privacy.** Personal details of clients are disclosed to staff only under the consent mechanism of UC-13, and every such disclosure is logged. Individual contributions are shown only as the group's visibility setting allows. A user joins a group only by accepting an invitation that states the group's visibility.
+  *Verified by:* automated tests that check that a staff request for client details without consent is refused, that every permitted disclosure creates a log entry, that a member sees other members' contributions only as the group's visibility setting allows, and that a user cannot join a group without accepting an invitation.
 - **NFR-10 Ethical constraint.** The system handles only fictitious funds and test data. No real financial data or real personal data is collected.
+  *Verified by:* a review before deployment confirming that the database holds only seeded test data, that no real payment provider is connected, and that no form asks for real financial details such as card or bank account numbers.
 
 ### F. Domain Requirements
 
@@ -326,7 +336,7 @@ The work is decomposed into a deliverable-oriented work breakdown structure that
 | 4.4 | Deployment | Deployed application and execution URL | S4 |
 | 5.1 | Unit and integration testing | Test suite and test report | S3–S4 |
 | 5.2 | Requirements traceability | Requirements traceability matrix | S4 |
-| 5.3 | Non-functional testing | Performance, security and availability checks | S4 |
+| 5.3 | Non-functional testing | Load test, uptime report and reconciliation, security tests and usability test, as stated for NFR-01 to NFR-04 | S4 |
 | 5.4 | Prompt reproducibility | Report of at least three regeneration runs | S4 |
 | 6.1 | Interim report | Interim report (PDF) | S1 |
 | 6.2 | Final report | Final report, 50 to 150 pages (PDF) | S3–R |
