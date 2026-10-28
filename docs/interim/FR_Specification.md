@@ -39,7 +39,7 @@ CR-02 is verified by sending requests directly to the server, bypassing the user
 |----|------|----------|----------|----------|--------------|--------------|
 | FR-01 | Register User | UC-01 | Must | — | — | 02 |
 | FR-02 | Log In and Log Out | UC-02 | Must | P8 | — | 01 (placeholder) |
-| FR-03 | Manage Personal Accounts | UC-03 | Must | — | DR-04 | 03, 04, 16 |
+| FR-03 | Manage Personal Accounts | UC-03 | Must | — | DR-01, DR-04 | 03, 04, 16 |
 | FR-04 | Set Up Group from Template | UC-04 | Must | P2, P5 | DR-05, DR-07 | 13, 14 |
 | FR-05 | Manage Router | UC-05 | Must | P1, P2 | DR-05 | 05, 12 |
 | FR-06 | Manage Group | UC-06 | Must | P3 | DR-07 | 11, 23 |
@@ -105,7 +105,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 | **Requirement** | The system shall let a client open spending and savings accounts, each with a unique account number and a zero balance. It shall list the client's open personal accounts with their balances, and let the client rename them. It shall let the client close an account only if all three hold: its balance is zero, no router rule or remainder points to it, and it has no open dispute flag. |
 | **Inputs** | Account type, name; new name; close request |
 | **Outputs** | Account with number and balance; list of accounts; error naming the unmet condition |
-| **Business rules** | Table II, DR-04 |
+| **Business rules** | Table II, DR-01, DR-04 |
 
 **Acceptance criteria**
 - **AC-03.1** A new account has an account number that no other account or router has, and a balance of ₩0.
@@ -113,7 +113,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 - **AC-03.3** Renaming changes the name and leaves the account number and history unchanged.
 - **AC-03.4** Closing is rejected, with the reason shown, for an account with a balance other than ₩0, for an account that a router rule or remainder points to, and for an account with an open flag.
 - **AC-03.5** A closed account keeps its history. Transfers to and from it are rejected.
-- **AC-03.6** A spending account with a balance of −₩20,000 cannot be closed. After a deposit of ₩20,000 it can.
+- **AC-03.6** A spending account with a balance of ₩20,000 cannot be closed. After a transfer of ₩20,000 to another of the client's accounts it has ₩0 and can be closed.
 
 ### FR-04 Set Up Group from Template
 
@@ -197,7 +197,7 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 |---|---|
 | **Use case** | UC-07 · **Priority** Must |
 | **Actor** | Client (including group owners and members) |
-| **Requirement** | The system shall let a client transfer an amount from one of their own open personal accounts to another open account or router, identified by its number or chosen from a list, as far as the flow rules of Table II allow. It shall debit and credit both accounts in one atomic transaction and record the acting user, both accounts, the amount, the message and the time. If the destination is a router, it shall split the amount by the router's rules in the same transaction (DR-05). |
+| **Requirement** | The system shall let a client transfer an amount from one of their own open personal accounts to another open account or router, identified by its number or chosen from a list, as far as the flow rules of Table II allow. It shall reject a transfer larger than the balance of the source account (DR-01). It shall debit and credit both accounts in one atomic transaction and record the acting user, both accounts, the amount, the message and the time. If the destination is a router, it shall split the amount by the router's rules in the same transaction (DR-05). |
 | **Inputs** | Source account, destination (account or router number), amount, message (optional) |
 | **Outputs** | Recorded transfer, and any router splits; or an error naming the reason |
 | **Business rules** | Table II, DR-01 to DR-06, INC-01, INC-02 |
@@ -213,9 +213,9 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
   - the router's balance staying ₩0.
 - **AC-07.6** A transfer whose source is not one of the client's own personal accounts is rejected. This includes a group account as source.
 - **AC-07.7** Amounts of 0 or below, an unknown account number, and a closed account are rejected.
-- **AC-07.8** A transfer larger than the balance of a personal spending account succeeds, and the balance becomes negative (DR-01).
+- **AC-07.8** With a spending account balance of ₩50,000, a transfer of ₩50,000 succeeds and leaves ₩0. A transfer of ₩50,001 is rejected with the reason "insufficient balance", and nothing is recorded (DR-01). The same holds for a savings account.
 - **AC-07.9** When a transfer is rejected, no transaction is recorded and no balance changes.
-- **AC-07.10** Twenty transfers of ₩1,000 each, sent at the same time from one spending account with a balance of ₩10,000, all succeed: twenty transactions are recorded, the balance becomes −₩10,000, and no update is lost (DR-01, DR-02).
+- **AC-07.10** Twenty transfers of ₩1,000 each, sent at the same time from one spending account with a balance of ₩10,000, exactly ten succeed: ten transactions are recorded, the balance ends at ₩0 and is never below ₩0, the ten rejected transfers leave no record, and no update is lost (DR-01, DR-02).
 - **AC-07.11** A transfer request sent directly to the server, bypassing the user interface, with another user's account as the source is rejected and changes nothing (CR-02).
 
 ### FR-08 Deposit Funds
@@ -242,20 +242,20 @@ Each FR maps to exactly one use case and each use case UC-01 to UC-13 to exactly
 |---|---|
 | **Use case** | UC-09 · **Priority** Must |
 | **Actor** | Client; Group owner or Member with the payer role |
-| **Requirement** | The system shall let a client pay an external payee, identified by name and an optional reference, from one of their own spending accounts. It shall let the owner or a payer of a group pay from that group's OWT accounts. It shall record the payment on the sender's side only, with payee, reference, amount, acting user and time. It shall reject a payment from a savings account, and a payment that would take an OWT account below zero. A withdrawal is a payment to the acting user. |
+| **Requirement** | The system shall let a client pay an external payee, identified by name and an optional reference, from one of their own spending accounts. It shall let the owner or a payer of a group pay from that group's OWT accounts. It shall record the payment on the sender's side only, with payee, reference, amount, acting user and time. It shall reject a payment from a savings account, and a payment larger than the balance of its source account, personal or OWT (DR-01). A withdrawal is a payment to the acting user. |
 | **Inputs** | Source account, payee, reference (optional), amount; or withdrawal and amount |
 | **Outputs** | Recorded payment; or an error naming the reason |
 | **Business rules** | Table II, DR-01 to DR-04, DR-06, INC-01 |
 
 **Acceptance criteria**
 - **AC-09.1** A payment of ₩65,000 to "SK Telecom" from Minji's spending account lowers its balance by ₩65,000, and records the payee, the reference and Minji as actor. No account in the system is credited.
-- **AC-09.2** A payment from a personal spending account larger than its balance succeeds (DR-01).
+- **AC-09.2** With a personal spending account balance of ₩30,000, a payment of ₩30,001 is rejected with the reason "insufficient balance", and nothing is recorded. A withdrawal larger than the balance is rejected in the same way (DR-01).
 - **AC-09.3** A payment from a savings account is rejected.
 - **AC-09.4** Hana (owner) and a payer can pay from a group account. Ji-ho (contributor) cannot; the server rejects his request.
 - **AC-09.5** With a group account balance of ₩50,000, a payment of ₩50,000 succeeds and leaves ₩0. A payment of ₩50,001 is rejected and nothing is recorded.
 - **AC-09.6** A withdrawal of ₩100,000 is recorded as a payment with the acting user as payee and the reference "cash withdrawal".
 - **AC-09.7** A payment without a payee, or with an amount of 0 or below, is rejected.
-- **AC-09.8** Twenty payments of ₩1,000 each, sent at the same time by Hana and a payer from a group account with a balance of ₩10,000: exactly ten succeed, the balance ends at ₩0 and is never below ₩0, and the ten rejected payments leave no record (DR-06).
+- **AC-09.8** Twenty payments of ₩1,000 each, sent at the same time by Hana and a payer from a group account with a balance of ₩10,000: exactly ten succeed, the balance ends at ₩0 and is never below ₩0, and the ten rejected payments leave no record (DR-01).
 
 ### FR-10 View History and Contributions
 

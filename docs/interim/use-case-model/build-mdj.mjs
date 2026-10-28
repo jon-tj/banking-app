@@ -85,7 +85,7 @@ const DOCS = {
   'UC-11': 'FR-11. Flag a transaction as unauthorised and follow the flag’s status.',
   'UC-12': 'FR-12. Administrator searches transactions and resolves flags; personal details masked.',
   'UC-13': 'FR-13. Administrator requests consent for a flag; client grants or denies; 72-hour expiry checked by timestamp.',
-  'INC-01': 'Included use case (no own FR). Checks amount, account state, actor rights and the flow rules of Table II, the deposit limit, and that a group account does not go below zero.',
+  'INC-01': 'Included use case (no own FR). Checks amount, account state, actor rights and the flow rules of Table II, the deposit limit, and that the source balance covers the amount, so no account goes below zero.',
   'INC-02': 'Extension (no own FR). Splits an amount arriving at a router by its rules (DR-05), atomically with the incoming amount.',
   'INC-03': 'Included use case (no own FR). Limits per-member contributions to what the group’s visibility allows (DR-07).',
 };

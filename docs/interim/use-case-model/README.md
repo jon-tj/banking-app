@@ -127,7 +127,7 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 **Alternative flows**
 - **A1 View accounts:** the system lists the client's open personal accounts with their balances.
 - **A2 Rename:** the client enters a new name; the system saves it.
-- **A3 Close:** the client chooses to close an account. The system checks that the balance is zero, that no router rule or remainder points to it, and that it has no open dispute flag, then marks the account closed (DR-04).
+- **A3 Close:** the client chooses to close an account. Any money left in it must first be moved out by a transfer or withdrawal. The system checks that the balance is zero, that no router rule or remainder points to it, and that it has no open dispute flag, then marks the account closed (DR-04).
 
 **Exception flows**
 - **E1 Close not allowed** (A3): the system names the condition that is not met and leaves the account open.
@@ -242,7 +242,7 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 
 **Exception flows**
 - **E1 Number not found** (A1): no open account or router has the number.
-- **E2 Not allowed** (step 4): INC-01 returns a reason, which the system shows. Nothing is recorded.
+- **E2 Not allowed** (step 4): INC-01 returns a reason, for example a balance lower than the amount, which the system shows. Nothing is recorded.
 
 ### UC-08 Deposit Funds
 
@@ -282,7 +282,7 @@ Rules referred to as DR-xx are the domain requirements, and *Table II* is the ta
 - **A1 Withdrawal** (step 2): the actor chooses *withdrawal*; the payee is the acting user and the reference is *cash withdrawal*.
 
 **Exception flows**
-- **E1 Not allowed** (step 3): for example a savings account, a contributor without the payer role, or a group account that would go below zero. The system shows the reason; nothing is recorded.
+- **E1 Not allowed** (step 3): for example a savings account, a contributor without the payer role, or a source account whose balance is lower than the amount. The system shows the reason; nothing is recorded.
 - **E2 Missing payee** (step 3): no payee entered.
 
 ### UC-10 View History and Contributions
@@ -380,7 +380,7 @@ Included by UC-07, UC-08 and UC-09. Returns either *allowed* or the first reason
    - **Transfer:** the source is the actor's own personal account. The destination is any spending account; the actor's own savings account or router; or an OWT account or group number of a group the actor is a member of. Savings may only go to the actor's own accounts.
    - **Deposit:** the target is the actor's own spending account or router.
    - **Payment:** the source is the actor's own spending account, or an OWT account of a group in which the actor is owner or payer. Savings accounts cannot pay.
-4. A payment from an OWT account does not take its balance below zero (DR-06). Personal accounts may go below zero (DR-01).
+4. For a transfer or payment, the balance of the source account is at least the amount, so no account goes below zero (DR-01). This applies to personal and OWT accounts alike, and the check is made in the same atomic transaction as the debit.
 
 ### INC-02 Split Amount by Router
 

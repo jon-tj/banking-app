@@ -10043,7 +10043,7 @@
 						"$ref": "nown+4ofvhJV53kdTpdo"
 					},
 					"name": "INC-01 Validate Money Movement",
-					"documentation": "Included use case (no own FR). Checks amount, account state, actor rights and the flow rules of Table II, the deposit limit, and that a group account does not go below zero."
+					"documentation": "Included use case (no own FR). Checks amount, account state, actor rights and the flow rules of Table II, the deposit limit, and that the source balance covers the amount, so no account goes below zero."
 				},
 				{
 					"_type": "UMLUseCase",
