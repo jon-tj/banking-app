@@ -50,7 +50,7 @@ The instructor's feedback on the submitted proposal raised the points below. Eac
 |----------|-------------------------|-------|
 | ① Generated code often checks transfers and permissions only in the user interface; the checks belong in the server or database, with tests of requests that bypass the interface | Every request is authorised on the server. Requests that bypass the user interface are part of the acceptance criteria | CR-02; AC-05.3, AC-06.8, AC-07.11, AC-09.4, AC-10.7, AC-13.6 |
 | ① and ④-3 Balances must stay correct under concurrent transfers; define a pass criterion for N simultaneous requests | Pass criteria for simultaneous transfers, and for simultaneous payments from a group account, which must never go below zero | DR-02, DR-06; AC-07.10, AC-09.8 |
-| ② An alert by e-mail after five failed logins would need an external mail service | The alert is a message in the application only | UC-02; FR-02, AC-02.3 |
+| ② An alert by e-mail after five failed logins would need an external mail service | E-mail and other external notifications are out of scope. All user guidance, including the login block, invitations and consent requests, is shown in the application only | Section III-D; UC-02; FR-02, AC-02.3 |
 | ② Lifting login blocks and expiring consents need no scheduler | Both are checked by comparing timestamps when a request arrives | CR-06; AC-02.5, AC-13.3 |
 | ② 99 % availability (NFR-02) is hard to achieve and measure on free hosting; state how it is measured | A measurement method is added | NFR-02 |
 | ③ and ④-1 No permission scope covered payments to external payees, so the core feature did not apply to payments | Permission scopes are replaced by group roles. Payment rights follow the role: the owner of a personal account, or the owner or a payer of a group | Table II; UC-09; FR-09, AC-09.4 |
@@ -134,7 +134,7 @@ Both services confirm that shared accounts are a real and widespread need. Both 
 
 **In scope:** user registration and authentication; personal spending and savings accounts; groups with OWT accounts and subaccounts; personal and group routers; account system templates; contribution visibility within a group; internal transfers; simulated deposits; payments and withdrawals recorded on the sender side; transaction history; dispute flags; and administrator investigation under client consent.
 
-**Out of scope:** real money, integration with external banks or card networks, recipient-side processing of external payments, scheduled or recurring transfers (routers act only when money arrives), interest, loans, foreign currencies, native mobile applications, tax receipts for donations, and regulatory identity verification beyond what a demonstration requires.
+**Out of scope:** real money, integration with external banks or card networks, recipient-side processing of external payments, scheduled or recurring transfers (routers act only when money arrives), interest, loans, foreign currencies, native mobile applications, tax receipts for donations, regulatory identity verification beyond what a demonstration requires, and e-mail, SMS or push notifications. The system sends no messages outside the application: login blocks, invitations and consent requests are shown only as in-app messages, and e-mail addresses serve only as login names and are never verified or written to. Where a message would be sent in a real bank, a mock in-app notice is used instead.
 
 ## IV. Main Functions of the Target Information System
 
